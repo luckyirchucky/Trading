@@ -73,7 +73,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationSuccessHandler loginSuccessHandler() {
         return new SavedRequestAwareAuthenticationSuccessHandler() {
             @Override
-            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, IOException, ServletException {
+            @SneakyThrows
+            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
                 String username = authentication.getName();
                 if ("Tom".equals(username)) {
                     getRedirectStrategy().sendRedirect(request, response, "/crudTransport");
