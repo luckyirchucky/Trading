@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список доступных автомобилей</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<section id="header">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="btn btn-primary mr-auto" href="/">На главную страницу</a>
+    </nav>
+</section>
+<section id="container">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <h2 align="center">Список транспорта для бронирования</h2><br>
+            <table id="transportTable" class="table" align="center">
+                <thead>
+                <tr>
+                    <th scope="col">Транспортное средство</th>
+                    <th scope="col">Номер машины</th>
+                    <th scope="col">Год выпуска</th>
+                    <th scope="col">Стоимость аренды</th>
+                    <th scope="col">Состояние машины</th>
+                    <th scope="col">Наличие машины</th>
+                </tr>
+                </thead>
+                <tbody id="transportData">
+
+                </tbody>
+            </table><br>
+            <img src="https://effects1.ru/gallery/Klipart/Tekhnika-gr/legkovik/avto-25-0.png " width="230" height="100"/>
+            <img src="https://hdpic.club/uploads/posts/2021-12/1639493658_12-hdpic-club-p-avtomobil-bez-fona-12.png " width="230" height="150" style="margin-left:770px; margin-top:-125px"/>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    fetch('/transports')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            var transportData = document.getElementById("transportData");
+            data.forEach(function(transport) {
+                var row = transportData.insertRow();
+                row.insertCell(0).appendChild(document.createTextNode(transport.carName));
+                row.insertCell(1).appendChild(document.createTextNode(transport.number));
+                row.insertCell(2).appendChild(document.createTextNode(transport.year));
+                row.insertCell(3).appendChild(document.createTextNode(transport.price));
+                row.insertCell(4).appendChild(document.createTextNode(transport.stateTransport));
+                row.insertCell(5).appendChild(document.createTextNode(transport.availability));
+            });
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
