@@ -17,8 +17,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import suai.labs.spring.transport.security.token.JwtCsrfFilter;
-import suai.labs.spring.transport.security.token.JwtTokenRepository;
+//import suai.labs.spring.transport.security.token.JwtCsrfFilter;
+//import suai.labs.spring.transport.security.token.JwtTokenRepository;
 import suai.labs.spring.transport.service.user.service.UserService;
 
 import javax.servlet.ServletException;
@@ -33,8 +33,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserService service;
 
-    @Autowired
-    private JwtTokenRepository jwtTokenRepository;
+    //@Autowired
+    //private JwtTokenRepository jwtTokenRepository;
 
     @Autowired
     @Qualifier("handlerExceptionResolver")
@@ -49,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/", "/login", "/viewAvailableTransports").permitAll()
+                .antMatchers("/", "/viewAvailableTransports").permitAll()
                 .antMatchers("/crudTransport").access("principal.username.equals('Tom')")
                 .antMatchers("/addTransport").access("principal.username.equals('Irina')")
                 .and()

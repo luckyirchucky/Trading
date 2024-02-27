@@ -1,11 +1,12 @@
 package suai.labs.spring.transport.service.transport.service;
 
+import org.springframework.http.ResponseEntity;
 import suai.labs.spring.transport.service.transport.Transport;
 
 import java.util.List;
 
 public interface TransportService {
-    Transport saveTransport(Transport transport);
+    ResponseEntity<Transport> saveTransport(Transport transport);
 
     List<Transport> getTransports();
 

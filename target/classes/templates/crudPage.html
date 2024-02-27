@@ -112,49 +112,59 @@
             function fetchAndDisplayTransportData() {
                 fetch('/transports')
                     .then(response => {
-                        if (!response.ok) {
+                        if (response.ok) {
+                            return response.json();
+                        } else if (response.status === 404) {
+                            // Обработка ошибки 404 (Not Found)
+                            var transportData = document.getElementById("transportData");
+                            transportData.innerHTML = '<tr><td colspan="8" class="text-center">Транспортные средства не обнаружены</td></tr>';
+                            throw new Error('Транспортные средства не обнаружены');
+                        } else {
                             throw new Error('Network response was not ok');
                         }
-                        return response.json();
                     })
                     .then(data => {
                         var transportData = document.getElementById("transportData");
                         transportData.innerHTML = "";
-                        data.forEach(function(transport) {
-                            var row = transportData.insertRow();
-                            row.insertCell(0).appendChild(document.createTextNode(transport.carName));
-                            row.insertCell(1).appendChild(document.createTextNode(transport.number));
-                            row.insertCell(2).appendChild(document.createTextNode(transport.year));
-                            row.insertCell(3).appendChild(document.createTextNode(transport.price));
-                            row.insertCell(4).appendChild(document.createTextNode(transport.stateTransport));
-                            row.insertCell(5).appendChild(document.createTextNode(transport.availability));
-                            var updateCell = row.insertCell();
+                        if (data.length === 0) {
+                            transportData.innerHTML = '<tr><td colspan="8" class="text-center">Транспортные средства не обнаружены</td></tr>';
+                        } else {
+                            data.forEach(function(transport) {
+                                var row = transportData.insertRow();
+                                row.insertCell(0).appendChild(document.createTextNode(transport.carName));
+                                row.insertCell(1).appendChild(document.createTextNode(transport.number));
+                                row.insertCell(2).appendChild(document.createTextNode(transport.year));
+                                row.insertCell(3).appendChild(document.createTextNode(transport.price));
+                                row.insertCell(4).appendChild(document.createTextNode(transport.stateTransport));
+                                row.insertCell(5).appendChild(document.createTextNode(transport.availability));
+                                var updateCell = row.insertCell();
 
-                            var updateForm = document.createElement('form');
-                            updateForm.setAttribute("action", "/updateAvailability");
-                            updateForm.setAttribute("method", "POST");
-                            updateForm.setAttribute("enctype", "multipart/form-data");
-                            var updateButton = document.createElement('button');
-                            updateButton.setAttribute("type", "submit");
-                            updateButton.setAttribute("class", "btn btn-success btn-sm text-white");
-                            updateButton.setAttribute("data-id", transport.id);
-                            updateButton.appendChild(document.createTextNode("Обновить"));
-                            updateForm.appendChild(updateButton);
-                            updateCell.appendChild(updateForm);
+                                var updateForm = document.createElement('form');
+                                updateForm.setAttribute("action", "/transports/availability/" + transport.id);
+                                updateForm.setAttribute("method", "PUT");
+                                updateForm.setAttribute("enctype", "multipart/form-data");
+                                var updateButton = document.createElement('button');
+                                updateButton.setAttribute("type", "submit");
+                                updateButton.setAttribute("class", "btn btn-success btn-sm text-white");
+                                updateButton.setAttribute("data-id", transport.id);
+                                updateButton.appendChild(document.createTextNode("Обновить"));
+                                updateForm.appendChild(updateButton);
+                                updateCell.appendChild(updateForm);
 
-                            var deleteCell = row.insertCell();
-                            var deleteForm = document.createElement('form');
-                            deleteForm.setAttribute("action", "/delete/" + transport.id);
-                            deleteForm.setAttribute("method", "DELETE");
-                            deleteForm.setAttribute("enctype", "multipart/form-data");
-                            var deleteButton = document.createElement('button');
-                            deleteButton.setAttribute("type", "submit");
-                            deleteButton.setAttribute("class", "btn btn-danger btn-sm text-white");
-                            deleteButton.setAttribute("data-id", transport.id);
-                            deleteButton.appendChild(document.createTextNode("Удалить"));
-                            deleteForm.appendChild(deleteButton);
-                            deleteCell.appendChild(deleteForm);
-                        });
+                                var deleteCell = row.insertCell();
+                                var deleteForm = document.createElement('form');
+                                deleteForm.setAttribute("action", "/transports/" + transport.id);
+                                deleteForm.setAttribute("method", "DELETE");
+                                deleteForm.setAttribute("enctype", "multipart/form-data");
+                                var deleteButton = document.createElement('button');
+                                deleteButton.setAttribute("type", "submit");
+                                deleteButton.setAttribute("class", "btn btn-danger btn-sm text-white");
+                                deleteButton.setAttribute("data-id", transport.id);
+                                deleteButton.appendChild(document.createTextNode("Удалить"));
+                                deleteForm.appendChild(deleteButton);
+                                deleteCell.appendChild(deleteForm);
+                            });
+                        }
                     })
                     .catch(error => {
                         console.error('Fetch error:', error);
@@ -164,7 +174,7 @@
             fetchAndDisplayTransportData();
 
             function deleteTransport(id) {
-                fetch('/delete/' + id, {
+                fetch('/transports/' + id, {
                     method: 'DELETE'
                 })
                 .then(response => {
@@ -175,8 +185,12 @@
                     }
                 })
                 .then(data => {
+                    if (data.length === 0) {
+                        fetchAndDisplayTransportData();
+                    } else {
                         document.getElementById('transportForm').reset();
                         fetchAndDisplayTransportData();
+                    }
                 })
                 .catch(error => {
                     console.error('Fetch error:', error);
@@ -184,8 +198,8 @@
             }
 
             function updateTransportAvailability(id) {
-                fetch('/updateAvailability/' + id, {
-                    method: 'POST'
+                fetch('/transports/availability/' + id, {
+                    method: 'PUT'
                 })
                 .then(response => {
                     if (response.ok) {
@@ -217,7 +231,7 @@
 
             document.getElementById('transportForm').addEventListener('submit', function(event) {
                     event.preventDefault();
-                    fetch('/add', {
+                    fetch('/transport', {
                         method: 'POST',
                         body: JSON.stringify({
                             carName: document.getElementById('carNameInput').value,

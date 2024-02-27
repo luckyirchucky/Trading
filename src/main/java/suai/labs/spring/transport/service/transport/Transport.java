@@ -11,10 +11,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
 @Setter
 @Table(name = "transport")
+@NoArgsConstructor
 public class Transport extends JpaEntity {
 
 	@NotBlank
