@@ -115,7 +115,6 @@
                         if (response.ok) {
                             return response.json();
                         } else if (response.status === 404) {
-                            // Обработка ошибки 404 (Not Found)
                             var transportData = document.getElementById("transportData");
                             transportData.innerHTML = '<tr><td colspan="8" class="text-center">Транспортные средства не обнаружены</td></tr>';
                             throw new Error('Транспортные средства не обнаружены');
@@ -231,7 +230,7 @@
 
             document.getElementById('transportForm').addEventListener('submit', function(event) {
                     event.preventDefault();
-                    fetch('/transport', {
+                    fetch('/transports', {
                         method: 'POST',
                         body: JSON.stringify({
                             carName: document.getElementById('carNameInput').value,
