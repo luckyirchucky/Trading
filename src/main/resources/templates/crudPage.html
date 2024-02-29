@@ -230,7 +230,7 @@
 
             document.getElementById('transportForm').addEventListener('submit', function(event) {
                     event.preventDefault();
-                    fetch('/transport', {
+                    fetch('/transports', {
                         method: 'POST',
                         body: JSON.stringify({
                             carName: document.getElementById('carNameInput').value,

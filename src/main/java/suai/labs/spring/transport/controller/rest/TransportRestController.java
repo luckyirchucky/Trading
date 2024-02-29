@@ -2,7 +2,6 @@ package suai.labs.spring.transport.controller.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import suai.labs.spring.transport.service.transport.Transport;
@@ -22,8 +21,7 @@ public class TransportRestController {
         return service.getTransports();
     }
 
-    @PostMapping("/transport")
-    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/transports")
     public ResponseEntity<Transport> addTransport(@RequestBody Transport transport) {
         return service.saveTransport(transport);
     }
