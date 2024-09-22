@@ -10,10 +10,10 @@
 		<relativePath />
 	</parent>
 
-	<groupId>suai.labs.spring.transport</groupId>
-	<artifactId>spring-boot-transport-app</artifactId>
+	<groupId>suai.trading</groupId>
+	<artifactId>spring-boot-trading-app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>spring-boot-transport-app</name>
+	<name>spring-boot-trading-app</name>
 	<description>Spring Boot Application</description>
 
 	<properties>
@@ -77,6 +77,11 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
 		</dependency>
 	</dependencies>
 

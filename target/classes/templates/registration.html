@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input {
+            display: block;
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <form method="POST" action="/registration">
+        <h2>Регистрация</h2>
+        <div>
+            <label for="username">Имя пользователя</label>
+            <input id="username" name="username" type="text" placeholder="Введите имя пользователя" required autofocus/>
+        </div>
+        <div>
+            <label for="password">Пароль</label>
+            <input id="password" name="password" type="password" placeholder="Введите пароль" required/>
+        </div>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+    <a href="/">Главная</a>
+</div>
+</body>
+</html>
