@@ -86,17 +86,6 @@ public class ClientQueryServiceImpl implements ClientQueryService {
     }
 
     private boolean setNewClientData(Client updatedClient, Client client, ClientRepository clientRepository) {
-//        // Используем старые значения, если новые не предоставлены
-//        if (updatedClient.getUserName() != null) {
-//            client.setUserName(updatedClient.getUserName());
-//        }
-//        // Сохраняем старое значение пароля, если не указано новое
-//        if (updatedClient.getPassword() != null && !updatedClient.getPassword().isEmpty()) {
-//            client.setPassword(updatedClient.getPassword());
-//        }
-        //var client2 = clientRepository.findById(client.getId());
-        client.setUserName(updatedClient.getUserName());
-       // client.setPassword(client2.getPassword());
         client.setFirstName(updatedClient.getFirstName());
         client.setMiddleName(updatedClient.getMiddleName());
         client.setLastName(updatedClient.getLastName());

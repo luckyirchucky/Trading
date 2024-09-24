@@ -20,7 +20,7 @@ public class Client extends JpaEntity {
     @ManyToOne
     private ClientRole role;
 
-    @NotNull
+    @NotNull(groups = OnCreate.class)
     private String userName;
 
     @NotNull

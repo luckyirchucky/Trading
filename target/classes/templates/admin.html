@@ -62,7 +62,7 @@
             $('#bankAccount').val(row.find('td:eq(7)').text());
 
             // Сохраняем старые значения в скрытых полях
-            $('#userName').val(row.find('td:eq(0)').data('username'));
+            //$('#userName').val(row.find('td:eq(0)').data('username'));
 
             $('#updateUserId').val(userId);
             $('#updateModal').show();
@@ -71,8 +71,8 @@
         function updateUser() {
             const userId = $('#updateUserId').val();
             const updatedUser = {
-                userName: $('#userName').val(),
-                password: $('#password').val(),
+                // userName: $('#userName').val(),
+                // password: $('#password').val(),
                 lastName: $('#lastName').val(),
                 firstName: $('#firstName').val(),
                 middleName: $('#middleName').val(),
