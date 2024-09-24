@@ -7,8 +7,8 @@ import java.util.UUID;
 public interface ClientRepository extends JpaRepository<Client> {
 
     Client findById(UUID id);
-    Client findByUsername(String name);
-    boolean existsClientByUsername(String name);
+    Client findByUserName(String name);
+    boolean existsClientByUserName(String name);
     boolean existsClientById(UUID id);
     void deleteClientById(UUID id);
 }

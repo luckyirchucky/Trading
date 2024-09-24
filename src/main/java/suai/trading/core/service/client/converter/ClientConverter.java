@@ -20,8 +20,15 @@ public class ClientConverter extends AbstractEntityConverter<Client, ClientView>
         return ClientView.builder()
                 .id(entity.getId())
                 .clientRole(clientRoleEntityConverter.convertToView(entity.getRole()))
-                .username(entity.getUsername())
+                .username(entity.getUserName())
                 .password(entity.getPassword())
+                .firstName(entity.getFirstName())
+                .middleName(entity.getMiddleName())
+                .lastName(entity.getLastName())
+                .phoneNumber(entity.getPhoneNumber())
+                .email(entity.getEmail())
+                .dateOfBirth(entity.getDateOfBirth())
+                .bankAccount(entity.getBankAccount())
                 .build();
     }
 }

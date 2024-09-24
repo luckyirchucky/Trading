@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Регистрация</title>
+    <title>Registration</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,23 +15,187 @@
             width: 100%;
             max-width: 300px;
         }
+        .error {
+            border: 2px solid red;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 <div>
-    <form method="POST" action="/registration">
+    <form id="registrationForm">
         <h2>Регистрация</h2>
+
         <div>
-            <label for="username">Имя пользователя</label>
-            <input id="username" name="username" type="text" placeholder="Введите имя пользователя" required autofocus/>
+            <label for="userName">Имя пользователя</label>
+            <input id="userName" name="userName" type="text" placeholder="имя пользователя" required autofocus/>
         </div>
+
         <div>
-            <label for="password">Пароль</label>
-            <input id="password" name="password" type="password" placeholder="Введите пароль" required/>
+            <label for="lastName">Фамилия</label>
+            <input id="lastName" name="lastName" type="text" placeholder="фамилию" required />
         </div>
+
+        <div>
+            <label for="firstName">Имя</label>
+            <input id="firstName" name="firstName" type="text" placeholder="имя" required />
+        </div>
+
+        <div>
+            <label for="middleName">Отчество</label>
+            <input id="middleName" name="middleName" type="text" placeholder="отчество" />
+        </div>
+
+        <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="email" required />
+        </div>
+
+        <div>
+            <label for="phoneNumber">Номер телефона</label>
+            <input id="phoneNumber" name="phoneNumber" type="tel" placeholder="+7хххххххххх" required />
+        </div>
+
+        <div>
+            <label for="dateOfBirth">Дата рождения</label>
+            <input id="dateOfBirth" name="dateOfBirth" type="date" required />
+        </div>
+
+        <div>
+            <label for="bankAccount">Банковский счет</label>
+            <input id="bankAccount" name="bankAccount" type="text" placeholder="хххххххххх" required />
+        </div>
+
+        <div>
+            <label for="password">Придумайте пароль от 5 символов</label>
+            <input id="password" name="password" type="password" placeholder="ххххх" required />
+        </div>
+
         <button type="submit">Зарегистрироваться</button>
     </form>
+
+    <p id="registrationResult" class="hidden"></p>
     <a href="/">Главная</a>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#registrationForm').submit(function(event) {
+            event.preventDefault();
+
+            // Очистить предыдущие сообщения об ошибках
+            $('.error').removeClass('error');
+            $('#registrationResult').addClass('hidden').text('');
+
+            const userName = $('#userName').val().trim();
+            const lastName = $('#lastName').val().trim();
+            const firstName = $('#firstName').val().trim();
+            const middleName = $('#middleName').val().trim();
+            const email = $('#email').val().trim();
+            const phoneNumber = $('#phoneNumber').val().trim();
+            const dateOfBirth = $('#dateOfBirth').val();
+            const bankAccount = $('#bankAccount').val().trim();
+            const password = $('#password').val().trim();
+
+            let hasError = false;
+            let errorMessage = "";
+
+            if (userName === '') {
+                $('#userName').addClass('error');
+                errorMessage += "Имя пользователя не может быть пустым.\n";
+                hasError = true;
+            }
+
+            if (lastName === '') {
+                $('#lastName').addClass('error');
+                errorMessage += "Фамилия не может быть пустой.\n";
+                hasError = true;
+            }
+
+            if (firstName === '') {
+                $('#firstName').addClass('error');
+                errorMessage += "Имя не может быть пустым.\n";
+                hasError = true;
+            }
+
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                $('#email').addClass('error');
+                errorMessage += "Некорректный email.\n";
+                hasError = true;
+            }
+
+            const phonePattern = /^\+?[0-9. ()-]{7,25}$/;
+            if (!phonePattern.test(phoneNumber)) {
+                $('#phoneNumber').addClass('error');
+                errorMessage += "Некорректный номер телефона.\n";
+                hasError = true;
+            }
+
+            const today = new Date();
+            const birthDate = new Date(dateOfBirth);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            if (birthDate > today.setFullYear(today.getFullYear() - age)) {
+                age--; // Если день рождения еще не пришел в этом году
+            }
+            if (age < 18) {
+                $('#dateOfBirth').addClass('error');
+                errorMessage += "Вы должны быть совершеннолетними (18 лет).\n";
+                hasError = true;
+            }
+
+            if (bankAccount.length < 10) {
+                $('#bankAccount').addClass('error');
+                errorMessage += "Данные банковского счета должны быть не менее 10 символов.\n";
+                hasError = true;
+            }
+
+            if (password.length < 5) {
+                $('#password').addClass('error');
+                errorMessage += "Пароль должен содержать не менее 5 символов.\n";
+                hasError = true;
+            }
+
+            if (hasError) {
+                $('#registrationResult').text("Пожалуйста, исправьте следующие ошибки:\n" + errorMessage).removeClass('hidden');
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/registration',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    userName: userName,
+                    lastName: lastName,
+                    firstName: firstName,
+                    middleName: middleName,
+                    email: email,
+                    phoneNumber: phoneNumber,
+                    dateOfBirth: dateOfBirth,
+                    bankAccount: bankAccount,
+                    password: password
+                }),
+                success: function(response) {
+                    if (response.redirect) {
+                        window.location.href = response.redirect;
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 400) {
+                        $('#registrationResult').text("Ошибка валидации. Пожалуйста, проверьте ваши данные.").removeClass('hidden');
+                    } else if (xhr.status === 409) {
+                        $('#registrationResult').text("Пользователь уже существует. Пожалуйста, выберите другое имя пользователя.").removeClass('hidden');
+                    } else {
+                        $('#registrationResult').text("Произошла ошибка. Пожалуйста, попробуйте снова позже.").removeClass('hidden');
+                    }
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

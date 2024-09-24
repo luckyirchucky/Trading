@@ -3,11 +3,21 @@ package suai.trading.core.service.client.command;
 import lombok.Builder;
 import lombok.Data;
 import suai.trading.core.service.role.ClientRole;
+import suai.trading.core.service.role.ClientRoleView;
+
+import java.time.LocalDate;
 
 @Data
 @Builder
 public class CreateClientCommand {
     private final ClientRole role;
-    private final String name;
+    private final String userName;
     private final String password;
+    private final String lastName;
+    private final String firstName;
+    private final String middleName;
+    private final String email;
+    private final String phoneNumber;
+    private final LocalDate dateOfBirth;
+    private final String bankAccount;
 }

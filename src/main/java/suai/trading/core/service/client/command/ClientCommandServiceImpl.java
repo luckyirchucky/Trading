@@ -22,7 +22,8 @@ public class ClientCommandServiceImpl implements ClientCommandService {
     public Id create(CreateClientCommand command) {
         var role = clientRoleRepository.findById(command.getRole().getId())
                 .orElseThrow(() -> new UserException("Роль не найдена"));
-        var client = new Client(role, command.getPassword(), command.getName());
+        var client = new Client(role, command.getUserName(), command.getLastName(), command.getFirstName(), command.getMiddleName(),
+                command.getEmail(), command.getPhoneNumber(), command.getDateOfBirth(), command.getBankAccount(), command.getPassword());
         clientRepository.save(client);
         return new Id(client.getId());
     }
