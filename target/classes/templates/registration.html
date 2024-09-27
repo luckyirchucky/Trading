@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Registration</title>
+    <title>Регистрация</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -35,7 +35,7 @@
 
         <div>
             <label for="lastName">Фамилия</label>
-            <input id="lastName" name="lastName" type="text" placeholder="фамилию" required />
+            <input id="lastName" name="lastName" type="text" placeholder="фамилия" required />
         </div>
 
         <div>
@@ -64,13 +64,26 @@
         </div>
 
         <div>
-            <label for="bankAccount">Банковский счет</label>
-            <input id="bankAccount" name="bankAccount" type="text" placeholder="хххххххххх" required />
-        </div>
-
-        <div>
             <label for="password">Придумайте пароль от 5 символов</label>
             <input id="password" name="password" type="password" placeholder="ххххх" required />
+        </div>
+
+        <h3>Информация о банковском аккаунте</h3>
+        <div>
+            <label for="cardNumber">Номер карты</label>
+            <input id="cardNumber" name="cardNumber" type="text" placeholder="номер карты" required />
+        </div>
+        <div>
+            <label for="cardholderName">Имя на карте</label>
+            <input id="cardholderName" name="cardholderName" type="text" placeholder="имя на карте" required />
+        </div>
+        <div>
+            <label for="expirationDate">Срок действия карты (MM/YY)</label>
+            <input id="expirationDate" name="expirationDate" type="text" placeholder="MM/YY" required />
+        </div>
+        <div>
+            <label for="cvv">CVV</label>
+            <input id="cvv" name="cvv" type="text" placeholder="CVV" required />
         </div>
 
         <button type="submit">Зарегистрироваться</button>
@@ -86,7 +99,6 @@
         $('#registrationForm').submit(function(event) {
             event.preventDefault();
 
-            // Очистить предыдущие сообщения об ошибках
             $('.error').removeClass('error');
             $('#registrationResult').addClass('hidden').text('');
 
@@ -97,8 +109,12 @@
             const email = $('#email').val().trim();
             const phoneNumber = $('#phoneNumber').val().trim();
             const dateOfBirth = $('#dateOfBirth').val();
-            const bankAccount = $('#bankAccount').val().trim();
             const password = $('#password').val().trim();
+
+            const cardNumber = $('#cardNumber').val().trim();
+            const cardholderName = $('#cardholderName').val().trim();
+            const expirationDate = $('#expirationDate').val().trim();
+            const cvv = $('#cvv').val().trim();
 
             let hasError = false;
             let errorMessage = "";
@@ -147,15 +163,36 @@
                 hasError = true;
             }
 
-            if (bankAccount.length < 10) {
-                $('#bankAccount').addClass('error');
-                errorMessage += "Данные банковского счета должны быть не менее 10 символов.\n";
-                hasError = true;
-            }
-
             if (password.length < 5) {
                 $('#password').addClass('error');
                 errorMessage += "Пароль должен содержать не менее 5 символов.\n";
+                hasError = true;
+            }
+
+            const cardNumberPattern = /^\d{16,19}$/;
+            if (!cardNumberPattern.test(cardNumber)) {
+                $('#cardNumber').addClass('error');
+                errorMessage += "Некорректный номер карты. Должен содержать от 16 до 19 цифр.\n";
+                hasError = true;
+            }
+
+            if (cardholderName === '') {
+                $('#cardholderName').addClass('error');
+                errorMessage += "Имя на карте не может быть пустым.\n";
+                hasError = true;
+            }
+
+            const expirationDatePattern = /^(0[1-9]|1[0-2])\/[0-9]{2}$/;
+            if (!expirationDatePattern.test(expirationDate)) {
+                $('#expirationDate').addClass('error');
+                errorMessage += "Некорректный срок действия карты. Формат: MM/YY.\n";
+                hasError = true;
+            }
+
+            const cvvPattern = /^\d{3}$/;
+            if (!cvvPattern.test(cvv)) {
+                $('#cvv').addClass('error');
+                errorMessage += "Некорректный CVV. Должен содержать 3 цифры.\n";
                 hasError = true;
             }
 
@@ -166,7 +203,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/registration',
+                url: '/users',
                 contentType: 'application/json',
                 data: JSON.stringify({
                     userName: userName,
@@ -176,8 +213,13 @@
                     email: email,
                     phoneNumber: phoneNumber,
                     dateOfBirth: dateOfBirth,
-                    bankAccount: bankAccount,
-                    password: password
+                    password: password,
+                    bankAccount: {
+                        cardNumber: cardNumber,
+                        cardholderName: cardholderName,
+                        expirationDate: expirationDate,
+                        cvv: cvv
+                    }
                 }),
                 success: function(response) {
                     if (response.redirect) {

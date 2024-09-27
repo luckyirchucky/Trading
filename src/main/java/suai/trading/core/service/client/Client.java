@@ -2,12 +2,18 @@ package suai.trading.core.service.client;
 
 import lombok.*;
 import suai.trading.core.service.JpaEntity;
+import suai.trading.core.service.bankaccount.BankAccount;
 import suai.trading.core.service.role.ClientRole;
 import suai.trading.core.validation.client.Adult;
 import suai.trading.core.validation.client.OnCreate;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Entity
@@ -45,9 +51,9 @@ public class Client extends JpaEntity {
     @Adult
     private LocalDate dateOfBirth;
 
-    @NotNull
-    @Size(min = 10, message = "Данные банковского счета не могут быть меньше 10 знаков")
-    private String bankAccount;
+   // @NotNull
+    @OneToOne
+    private BankAccount bankAccount;
 
     @NotNull(groups = OnCreate.class)
     @Size(min=5, message = "Не меньше 5 знаков")

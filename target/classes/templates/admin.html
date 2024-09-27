@@ -21,7 +21,10 @@
                             "<td>" + user.dateOfBirth + "</td>" +
                             "<td>" + user.phoneNumber + "</td>" +
                             "<td>" + user.email + "</td>" +
-                            "<td>" + user.bankAccount + "</td>" +
+                            "<td>" + user.bankAccount.cardNumber + "</td>" +
+                            "<td>" + user.bankAccount.cardholderName + "</td>" +
+                            "<td>" + user.bankAccount.expirationDate + "</td>" +
+                            "<td>" + user.bankAccount.cvv + "</td>" +
                             "<td>" +
                             "<button onclick='deleteUser(\"" + user.id + "\")'>Удалить</button>" +
                             "<button onclick='populateUpdateForm(\"" + user.id + "\")'>Обновить</button>" +
@@ -51,7 +54,6 @@
         }
 
         function populateUpdateForm(userId) {
-            // Получаем данные пользователя
             const row = $('tr[data-user-id="' + userId + '"]');
             $('#lastName').val(row.find('td:eq(1)').text());
             $('#firstName').val(row.find('td:eq(2)').text());
@@ -59,10 +61,11 @@
             $('#dateOfBirth').val(row.find('td:eq(4)').text());
             $('#phoneNumber').val(row.find('td:eq(5)').text());
             $('#email').val(row.find('td:eq(6)').text());
-            $('#bankAccount').val(row.find('td:eq(7)').text());
 
-            // Сохраняем старые значения в скрытых полях
-            //$('#userName').val(row.find('td:eq(0)').data('username'));
+            $('#cardNumber').val(row.find('td:eq(7)').text());
+            $('#cardholderName').val(row.find('td:eq(8)').text());
+            $('#expirationDate').val(row.find('td:eq(9)').text());
+            $('#cvv').val(row.find('td:eq(10)').text());
 
             $('#updateUserId').val(userId);
             $('#updateModal').show();
@@ -71,17 +74,19 @@
         function updateUser() {
             const userId = $('#updateUserId').val();
             const updatedUser = {
-                // userName: $('#userName').val(),
-                // password: $('#password').val(),
                 lastName: $('#lastName').val(),
                 firstName: $('#firstName').val(),
                 middleName: $('#middleName').val(),
                 dateOfBirth: $('#dateOfBirth').val(),
                 phoneNumber: $('#phoneNumber').val(),
                 email: $('#email').val(),
-                bankAccount: $('#bankAccount').val()
+                bankAccount: {
+                    cardNumber: $('#cardNumber').val(),
+                    cardholderName: $('#cardholderName').val(),
+                    expirationDate: $('#expirationDate').val(),
+                    cvv: $('#cvv').val()
+                }
             };
-
             $.ajax({
                 url: '/users/' + userId,
                 type: 'PUT',
@@ -116,7 +121,10 @@
             $('#dateOfBirth').val('');
             $('#phoneNumber').val('');
             $('#email').val('');
-            $('#bankAccount').val('');
+            $('#cardNumber').val('');
+            $('#cardholderName').val('');
+            $('#expirationDate').val('');
+            $('#cvv').val('');
             $('#updateUserId').val('');
         }
 
@@ -134,24 +142,24 @@
     <style>
         /* Стили для модального окна */
         .modal {
-            display: none; /* Скрыто по умолчанию */
-            position: fixed; /* Остается на месте */
-            z-index: 1000; /* Сверху других контентов */
+            display: none;
+            position: fixed;
+            z-index: 1000;
             left: 0;
             top: 0;
-            width: 100%; /* Полная ширина */
-            height: 100%; /* Полная высота */
-            overflow: auto; /* Если нужно, прокрутка */
-            background-color: rgb(0, 0, 0); /* Цвет фона */
-            background-color: rgba(0, 0, 0, 0.4); /* За фон с регулировкой прозрачности */
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
         }
 
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto; /* 15% сверху и по центру */
+            margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 80%; /* Ширина модального окна */
+            width: 80%;
         }
 
         .close {
@@ -182,7 +190,10 @@
             <th>Дата рождения</th>
             <th>Номер телефона</th>
             <th>Email</th>
-            <th>Банковский счет</th>
+            <th>Номер карты</th>
+            <th>Имя владельца карты</th>
+            <th>Срок действия</th>
+            <th>CVV</th>
             <th>Изменение данных</th>
         </tr>
         </thead>
@@ -204,11 +215,15 @@
             <input type="date" id="dateOfBirth" placeholder="Дата рождения">
             <input type="text" id="phoneNumber" placeholder="Номер телефона">
             <input type="email" id="email" placeholder="Email">
-            <input type="text" id="bankAccount" placeholder="Банковский счет">
+
+            <h3>Информация о банковском аккаунте</h3>
+            <input type="text" id="cardNumber" placeholder="Номер карты">
+            <input type="text" id="cardholderName" placeholder="Имя владельца карты">
+            <input type="text" id="expirationDate" placeholder="Срок действия (MM/YY)">
+            <input type="text" id="cvv" placeholder="CVV">
             <button onclick="updateUser()">Обновить данные</button>
         </div>
     </div>
-
 </div>
 </body>
 </html>

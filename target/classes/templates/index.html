@@ -1,20 +1,83 @@
 <!DOCTYPE HTML>
 <html xmlns:sec="http://www.springframework.org/security/tags" lang="en">
-    <head>
-        <title>Главная</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    </head>
-    <body>
-        <div>
-            <sec:authorize access="!isAuthenticated()">
-                <h4><a href="/login">Войти</a></h4>
-                <h4><a href="/registration">Зарегистрироваться</a></h4>
-            </sec:authorize>
-            <sec:authorize access="isAuthenticated()">
-                <h4><a href="/logout">Выйти</a></h4>
-            </sec:authorize>
-            <h4><a href="/news">Новости (только пользователь)</a></h4>
-            <h4><a href="/admin">Пользователи (только админ)</a></h4>
-        </div>
-    </body>
+<head>
+    <title>Главная</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Подключаем jQuery -->
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <sec:authorize access="!isAuthenticated()">
+        <h4><a href="/login">Войти</a></h4>
+        <h4><a href="/registration">Зарегистрироваться</a></h4>
+    </sec:authorize>
+    <sec:authorize access="isAuthenticated()">
+        <h4><a href="/logout">Выйти</a></h4>
+    </sec:authorize>
+    <h4><a href="/news">Новости (только пользователь)</a></h4>
+    <h4><a href="/admin">Пользователи (только админ)</a></h4>
+
+    <h2>Данные о криптовалютах:</h2>
+    <div id="cryptoDataContainer"></div>
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: '/tickers',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#cryptoDataContainer').empty();
+
+                    if (data && data.cryptoData && data.cryptoData.length > 0) {
+                        let table = '<table><thead><tr>' +
+                            '<th>№</th>' +
+                            '<th>Название</th>' +
+                            '<th>Символ</th>' +
+                            '<th>Цена (USD)</th>' +
+                            '<th>Рыночная капитализация (USD)</th>' +
+                            '<th>Циркулирующее предложение</th>' +
+                            '<th>Общий объем за 24ч</th>' +
+                            '</tr></thead><tbody>';
+
+                        data.cryptoData.forEach(function(crypto) {
+                            console.log(crypto);
+                            table += '<tr>' +
+                                '<td>' + crypto.rank + '</td>' +
+                                '<td>' + crypto.name + '</td>' +
+                                '<td>' + crypto.symbol + '</td>' +
+                                '<td>' + crypto.price_usd + '</td>' +
+                                '<td>' + crypto.market_cap_usd + '</td>' +
+                                '<td>' + crypto.csupply + '</td>' +
+                                '<td>' + crypto.volume24 + '</td>' +
+                                '</tr>';
+                        });
+                        table += '</tbody></table>';
+                        $('#cryptoDataContainer').append(table);
+                    } else {
+                        $('#cryptoDataContainer').append('<h3>Нет данных о криптовалютах.</h3>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#cryptoDataContainer').html('<h3>Ошибка получения данных</h3>');
+                    console.error('Ошибка:', error);
+                }
+            });
+        });
+    </script>
+</div>
+</body>
 </html>

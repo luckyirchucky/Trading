@@ -15,17 +15,17 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-public class RegistrationRestController {
+public class UserRestController {
 
     private final ClientQueryService clientQueryService;
 
-    @PostMapping("/registration")
+    @PostMapping("/users")
     public ResponseEntity<Map<String, String>> addUser(@RequestBody @Valid Client userForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Ошибка при вводе данных"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("ошибка", "Ошибка при вводе данных"));
         }
         if (!clientQueryService.saveUser(userForm)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Пользователь уже существует"));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("ошибка", "Пользователь уже существует"));
         }
         return ResponseEntity.ok(Map.of("redirect", "/index"));
     }
