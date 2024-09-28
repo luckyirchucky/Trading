@@ -17,6 +17,21 @@
         th {
             background-color: #f2f2f2;
         }
+        .refresh-button {
+            margin: 20px 0;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .refresh-button:hover {
+            background-color: #45a049;
+        }
+        #updateMessage {
+            margin: 20px 0;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -32,25 +47,38 @@
     <h4><a href="/admin">Пользователи (только админ)</a></h4>
 
     <h2>Данные о криптовалютах:</h2>
+
+    <button class="refresh-button" id="refreshButton">Обновить информацию</button>
+
+    <div id="updateMessage"></div>
     <div id="cryptoDataContainer"></div>
+
     <script>
-        $(document).ready(function() {
+        function fetchCryptoData() {
+            // Получаем текущее локальное время перед запросом
+            const requestTime = new Date().toLocaleString();
+
             $.ajax({
                 url: '/tickers',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
                     $('#cryptoDataContainer').empty();
+                    $('#updateMessage').empty();
+                    // Выводим локальное время запроса
+                    $('#updateMessage').append('Время запроса: ' + requestTime);
 
                     if (data && data.cryptoData && data.cryptoData.length > 0) {
                         let table = '<table><thead><tr>' +
                             '<th>№</th>' +
-                            '<th>Название</th>' +
+                            '<th>Криптовалюта</th>' +
                             '<th>Символ</th>' +
                             '<th>Цена (USD)</th>' +
-                            '<th>Рыночная капитализация (USD)</th>' +
-                            '<th>Циркулирующее предложение</th>' +
-                            '<th>Общий объем за 24ч</th>' +
+                            '<th>Цена (BTC)</th>' +
+                            '<th>Объем торгов монетой за последние 24 часа (USD)</th>' +
+                            '<th>Изменение цены за последние 24 часа (%)</th>' +
+                            '<th>Изменение цены за последние 7 дней (%)</th>' +
+                            '<th>Рыночная капитализация монет (USD)</th>' +
                             '</tr></thead><tbody>';
 
                         data.cryptoData.forEach(function(crypto) {
@@ -60,9 +88,11 @@
                                 '<td>' + crypto.name + '</td>' +
                                 '<td>' + crypto.symbol + '</td>' +
                                 '<td>' + crypto.price_usd + '</td>' +
-                                '<td>' + crypto.market_cap_usd + '</td>' +
-                                '<td>' + crypto.csupply + '</td>' +
+                                '<td>' + crypto.price_btc + '</td>' +
                                 '<td>' + crypto.volume24 + '</td>' +
+                                '<td>' + crypto.percent_change_24h + '</td>' +
+                                '<td>' + crypto.percent_change_7d + '</td>' +
+                                '<td>' + crypto.market_cap_usd + '</td>' +
                                 '</tr>';
                         });
                         table += '</tbody></table>';
@@ -75,6 +105,16 @@
                     $('#cryptoDataContainer').html('<h3>Ошибка получения данных</h3>');
                     console.error('Ошибка:', error);
                 }
+            });
+        }
+
+        // Инициализируем получение данных при загрузке страницы
+        $(document).ready(function() {
+            fetchCryptoData();
+
+            // Обработчик события для кнопки обновления
+            $('#refreshButton').click(function() {
+                fetchCryptoData();
             });
         });
     </script>

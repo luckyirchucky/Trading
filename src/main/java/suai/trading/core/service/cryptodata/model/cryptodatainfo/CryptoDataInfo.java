@@ -1,10 +1,13 @@
 package suai.trading.core.service.cryptodata.model.cryptodatainfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import suai.trading.core.service.JpaEntity;
-import suai.trading.core.service.cryptodata.model.info.Info;
 import suai.trading.core.service.cryptodata.model.cryptodata.CryptoData;
+import suai.trading.core.service.cryptodata.model.info.Info;
 
 import javax.persistence.*;
 import java.util.List;
