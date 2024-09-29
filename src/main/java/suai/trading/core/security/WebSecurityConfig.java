@@ -1,14 +1,19 @@
 package suai.trading.core.security;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import suai.trading.core.security.handler.CustomAuthenticationSuccessHandler;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final CustomAuthenticationSuccessHandler successHandler;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -21,22 +26,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/registration").not().fullyAuthenticated()
-                    .antMatchers("/admin/**").hasRole("Администратор")
-                    .antMatchers("/news").hasRole("Пользователь")
-                    .antMatchers("/index", "/resources/**").permitAll()
-                    .antMatchers("/v3/api-docs/**").permitAll()
-                    .antMatchers("/swagger-ui/**").permitAll()
-                    .antMatchers("/swagger-resources/**").permitAll()
-                .anyRequest().authenticated()
+                    .antMatchers( "/registration", "/login", "/resources/**", "/index", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
+                    .antMatchers("/updateUsers/**").hasRole("Администратор")
+                    .antMatchers("/usersPage", "/usersData", "/wallet").hasRole("Пользователь")
                 .and()
-                .formLogin()
-                    .loginPage("/login")
-                    .defaultSuccessUrl("/index")
-                    .permitAll()
+                    .formLogin()
+                        .loginPage("/login")
+                        .successHandler(successHandler)
+                        .permitAll()
                 .and()
-                .logout()
-                    .permitAll()
-                    .logoutSuccessUrl("/");
+                    .logout()
+                        .permitAll()
+                        .logoutSuccessUrl("/");
     }
 }

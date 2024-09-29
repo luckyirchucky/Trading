@@ -11,4 +11,5 @@ public class BankAccountView {
     private final String cardholderName;
     private final String expirationDate;
     private final int cvv;
+    private final double money;
 }

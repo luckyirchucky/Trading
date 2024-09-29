@@ -38,7 +38,7 @@ public class ClientQueryServiceImpl implements ClientQueryService {
         if (isClientExistByUserName(client.getUserName())) {
             return false;
         }
-        var command = CreateClientCommand.builder()
+        var commandClient = CreateClientCommand.builder()
                 .userName(client.getUserName())
                 .password(passwordEncoder.encode(client.getPassword()))
                 .role(clientRoleRepository.findByName("Пользователь"))
@@ -51,7 +51,7 @@ public class ClientQueryServiceImpl implements ClientQueryService {
                 .dateOfBirth(client.getDateOfBirth())
                 .build();
         try {
-            clientCommandService.create(command);
+            clientCommandService.create(commandClient);
             return true;
         } catch (Exception e) {
             return false;
@@ -92,7 +92,6 @@ public class ClientQueryServiceImpl implements ClientQueryService {
         client.setPhoneNumber(updatedClient.getPhoneNumber());
         client.setEmail(updatedClient.getEmail());
         client.setDateOfBirth(updatedClient.getDateOfBirth());
-        client.setBankAccount(updatedClient.getBankAccount());
         clientRepository.save(client);
         return true;
     }

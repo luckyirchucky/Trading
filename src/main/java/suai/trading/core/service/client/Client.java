@@ -7,9 +7,7 @@ import suai.trading.core.service.role.ClientRole;
 import suai.trading.core.validation.client.Adult;
 import suai.trading.core.validation.client.OnCreate;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -51,8 +49,8 @@ public class Client extends JpaEntity {
     @Adult
     private LocalDate dateOfBirth;
 
-   // @NotNull
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "bank_account_id")
     private BankAccount bankAccount;
 
     @NotNull(groups = OnCreate.class)

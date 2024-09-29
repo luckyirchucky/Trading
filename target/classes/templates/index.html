@@ -3,121 +3,13 @@
 <head>
     <title>Главная</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Подключаем jQuery -->
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .refresh-button {
-            margin: 20px 0;
-            padding: 10px 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        .refresh-button:hover {
-            background-color: #45a049;
-        }
-        #updateMessage {
-            margin: 20px 0;
-            font-weight: bold;
-        }
-    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div>
     <sec:authorize access="!isAuthenticated()">
         <h4><a href="/login">Войти</a></h4>
-        <h4><a href="/registration">Зарегистрироваться</a></h4>
     </sec:authorize>
-    <sec:authorize access="isAuthenticated()">
-        <h4><a href="/logout">Выйти</a></h4>
-    </sec:authorize>
-    <h4><a href="/news">Новости (только пользователь)</a></h4>
-    <h4><a href="/admin">Пользователи (только админ)</a></h4>
-
-    <h2>Данные о криптовалютах:</h2>
-
-    <button class="refresh-button" id="refreshButton">Обновить информацию</button>
-
-    <div id="updateMessage"></div>
-    <div id="cryptoDataContainer"></div>
-
-    <script>
-        function fetchCryptoData() {
-            // Получаем текущее локальное время перед запросом
-            const requestTime = new Date().toLocaleString();
-
-            $.ajax({
-                url: '/tickers',
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    $('#cryptoDataContainer').empty();
-                    $('#updateMessage').empty();
-                    // Выводим локальное время запроса
-                    $('#updateMessage').append('Время запроса: ' + requestTime);
-
-                    if (data && data.cryptoData && data.cryptoData.length > 0) {
-                        let table = '<table><thead><tr>' +
-                            '<th>№</th>' +
-                            '<th>Криптовалюта</th>' +
-                            '<th>Символ</th>' +
-                            '<th>Цена (USD)</th>' +
-                            '<th>Цена (BTC)</th>' +
-                            '<th>Объем торгов монетой за последние 24 часа (USD)</th>' +
-                            '<th>Изменение цены за последние 24 часа (%)</th>' +
-                            '<th>Изменение цены за последние 7 дней (%)</th>' +
-                            '<th>Рыночная капитализация монет (USD)</th>' +
-                            '</tr></thead><tbody>';
-
-                        data.cryptoData.forEach(function(crypto) {
-                            console.log(crypto);
-                            table += '<tr>' +
-                                '<td>' + crypto.rank + '</td>' +
-                                '<td>' + crypto.name + '</td>' +
-                                '<td>' + crypto.symbol + '</td>' +
-                                '<td>' + crypto.price_usd + '</td>' +
-                                '<td>' + crypto.price_btc + '</td>' +
-                                '<td>' + crypto.volume24 + '</td>' +
-                                '<td>' + crypto.percent_change_24h + '</td>' +
-                                '<td>' + crypto.percent_change_7d + '</td>' +
-                                '<td>' + crypto.market_cap_usd + '</td>' +
-                                '</tr>';
-                        });
-                        table += '</tbody></table>';
-                        $('#cryptoDataContainer').append(table);
-                    } else {
-                        $('#cryptoDataContainer').append('<h3>Нет данных о криптовалютах.</h3>');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    $('#cryptoDataContainer').html('<h3>Ошибка получения данных</h3>');
-                    console.error('Ошибка:', error);
-                }
-            });
-        }
-
-        // Инициализируем получение данных при загрузке страницы
-        $(document).ready(function() {
-            fetchCryptoData();
-
-            // Обработчик события для кнопки обновления
-            $('#refreshButton').click(function() {
-                fetchCryptoData();
-            });
-        });
-    </script>
 </div>
 </body>
 </html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:sec="http://www.springframework.org/security/tags" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Рынок криптовалюты</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .refresh-button {
+            margin: 20px 0;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .refresh-button:hover {
+            background-color: #45a049;
+        }
+        #updateMessage {
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        /* Стиль для модального окна */
+        .modal {
+            display: none; /* Скрыть модальное окно по умолчанию */
+            position: fixed; /* Осовободить позицию для всплывающего окна */
+            z-index: 1000; /* Слой выше остальных */
+            left: 0;
+            top: 0;
+            width: 100%; /* Полная ширина */
+            height: 100%; /* Полная высота */
+            overflow: auto; /* Если содержимое больше окна, прокручивать */
+            background-color: rgb(0,0,0); /* Цвет фона */
+            background-color: rgba(0,0,0,0.4); /* Полупрозрачный фон */
+        }
+        /* Модальное содержание */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* Отступ сверху и центрирование */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Ширина окна */
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <sec:authorize access="isAuthenticated()">
+        <h4><a href="/logout">Выйти</a></h4>
+    </sec:authorize>
+
+    <button class="user-data-button" id="userDataButton">Мой профиль</button>
+    <button class="wallet-button" id="walletButton">Мой портфель</button>
+
+    <div>
+        <h2>Данные о криптовалютах:</h2>
+        <button class="refresh-button" id="refreshButton">Обновить информацию</button>
+
+        <div id="updateMessage"></div>
+        <div id="cryptoDataContainer"></div>
+
+        <div id="purchaseModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeModal">&times;</span>
+                <h2>Покупка криптовалюты</h2>
+                <p>Введите количество монет для покупки (максимум 3).</p>
+                <p>Деньги спишутся с привязанной к аккаунту банковской карты.</p>
+                <input type="number" id="coinAmount" min="1" max="3" value="1">
+                <button id="confirmPurchase">Подтвердить покупку</button>
+                <div id="purchaseMessage"></div>
+            </div>
+        </div>
+
+        <script>
+            let currentCrypto = null;
+            let pricePerCoin = null; // Переменная для хранения цены одной монеты
+
+            function fetchCryptoData() {
+                const requestTime = new Date().toLocaleString();
+
+                $.ajax({
+                    url: '/tickers',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#cryptoDataContainer').empty();
+                        $('#updateMessage').empty();
+                        $('#updateMessage').append('Данные на: ' + requestTime);
+
+                        if (data && data.cryptoData && data.cryptoData.length > 0) {
+                            let table = '<table><thead><tr>' +
+                                '<th>№</th>' +
+                                '<th>Криптовалюта</th>' +
+                                '<th>Символ</th>' +
+                                '<th>Цена (USD)</th>' +
+                                '<th>Цена (BTC)</th>' +
+                                '<th>Объем торгов монетой за последние 24 часа (USD)</th>' +
+                                '<th>Изменение цены за последние 24 часа (%)</th>' +
+                                '<th>Изменение цены за последние 7 дней (%)</th>' +
+                                '<th>Рыночная капитализация монет (USD)</th>' +
+                                '<th>Действие</th>' +
+                                '</tr></thead><tbody>';
+
+                            data.cryptoData.forEach(function(crypto) {
+                                table += '<tr>' +
+                                    '<td>' + crypto.rank + '</td>' +
+                                    '<td>' + crypto.name + '</td>' +
+                                    '<td>' + crypto.symbol + '</td>' +
+                                    '<td>' + crypto.price_usd + '</td>' +
+                                    '<td>' + crypto.price_btc + '</td>' +
+                                    '<td>' + crypto.volume24 + '</td>' +
+                                    '<td>' + crypto.percent_change_24h + '</td>' +
+                                    '<td>' + crypto.percent_change_7d + '</td>' +
+                                    '<td>' + crypto.market_cap_usd + '</td>' +
+                                    // Добавляем атрибуты для передачи информации о цене
+                                    '<td><button class="buy-button" data-crypto="' + crypto.name + '" data-cost="' + crypto.price_usd + '">Купить</button></td>' +
+                                    '</tr>';
+                            });
+                            table += '</tbody></table>';
+                            $('#cryptoDataContainer').append(table);
+                        } else {
+                            $('#cryptoDataContainer').append('<h3>Нет данных о криптовалютах.</h3>');
+                        }
+
+                        // Обновляем обработчики событий после генерации таблицы
+                        $('.buy-button').click(function() {
+                            currentCrypto = $(this).data('crypto'); // Сохраняем название криптовалюты
+                            pricePerCoin = $(this).data('cost'); // Получаем цену за одну монету
+                            $('#purchaseModal').show(); // Показываем модальное окно
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        $('#cryptoDataContainer').html('<h3>Ошибка получения данных</h3>');
+                        console.error('Ошибка:', error);
+                    }
+                });
+            }
+
+            $(document).ready(function() {
+                fetchCryptoData();
+
+                $('#refreshButton').click(function() {
+                    fetchCryptoData();
+                });
+
+                $('#userDataButton').click(function() {
+                    window.location.href = '/userData';
+                });
+
+                $('#walletButton').click(function() {
+                    window.location.href = '/wallet';
+                });
+
+                // Закрытие модального окна
+                $('#closeModal').click(function() {
+                    $('#purchaseModal').hide();
+                    $('#coinAmount').val(1);
+                    $('#purchaseMessage').empty();
+                });
+
+                $('#confirmPurchase').click(function() {
+                    const amount = parseInt($('#coinAmount').val());
+                    if (amount > 3) {
+                        $('#purchaseMessage').text('Максимальное количество монет для единовременной покупки - 3.');
+                    } else {
+                        const command = {
+                            coin: currentCrypto,
+                            count: amount,
+                            costPerOneCoin: pricePerCoin,
+                            totalCost: amount * pricePerCoin
+                        };
+
+                        $.ajax({
+                            url: '/coinwallet/purchase',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(command),
+                            success: function(response) {
+                                $('#purchaseModal').hide(); // Закрытие модального окна
+                                $('#coinAmount').val(1); // Сброс значения
+                            },
+                            error: function(xhr, status, error) {
+                                $('#purchaseMessage').text('Ошибка при покупке: ' + error);
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
+    </div>
+</div>
+</body>
+</html>

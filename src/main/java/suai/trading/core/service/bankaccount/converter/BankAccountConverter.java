@@ -17,6 +17,7 @@ public class BankAccountConverter extends AbstractEntityConverter<BankAccount, B
                 .cardholderName(entity.getCardholderName())
                 .cvv(entity.getCvv())
                 .expirationDate(entity.getExpirationDate())
+                .money(entity.getMoney())
                 .build();
     }
 }

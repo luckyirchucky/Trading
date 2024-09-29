@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class CreateClientCommand {
+
     private final ClientRole role;
     private final String userName;
     private final String password;
