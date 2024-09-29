@@ -11,6 +11,7 @@ import suai.trading.core.service.client.ClientRepository;
 import suai.trading.core.service.client.ClientView;
 import suai.trading.core.service.client.command.ClientCommandService;
 import suai.trading.core.service.client.command.CreateClientCommand;
+import suai.trading.core.service.coinwallet.CoinWalletRepository;
 import suai.trading.core.service.role.ClientRoleRepository;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class ClientQueryServiceImpl implements ClientQueryService {
     private final EntityConverter<Client, ClientView> clientConverter;
     private final PasswordEncoder passwordEncoder;
     private final ClientRoleRepository clientRoleRepository;
+    private final CoinWalletRepository coinWalletRepository;
     private final ClientCommandService clientCommandService;
 
     @Override
@@ -70,6 +72,8 @@ public class ClientQueryServiceImpl implements ClientQueryService {
         if (isClientExistById(id)) {
             var client = findClient(id);
             if (!client.getRole().getName().equals("Администратор")) {
+                var wallet = coinWalletRepository.findCoinWalletByClient(client);
+                coinWalletRepository.delete(wallet);
                 clientRepository.deleteClientById(id);
             }
         }

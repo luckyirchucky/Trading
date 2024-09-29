@@ -31,23 +31,6 @@ public class BankAccount extends JpaEntity {
     @Size(min = 3, max = 3)
     private int cvv;
 
-    private double money;
-
     @OneToOne(mappedBy = "bankAccount")
     private Client client;
-
-    public BankAccount(String cardNumber, String cardholderName, String expirationDate,
-                       int cvv, Client client) {
-        this.money = 10000;
-        this.cardholderName = cardholderName;
-        this.cvv = cvv;
-        this.client = client;
-        this.cardNumber = cardNumber;
-        this.expirationDate = expirationDate;
-    }
-
-    public BankAccount(String cardNumber, String cardholderName, String expirationDate, int cvv) {
-        this(cardNumber, cardholderName, expirationDate, cvv, null);
-        this.money = 10000;
-    }
 }
