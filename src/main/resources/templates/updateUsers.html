@@ -112,7 +112,6 @@
 
         $(document).ready(function() {
             getUsers();
-            // Закрытие модального окна при нажатии вне его
             $(window).click(function(event) {
                 if ($(event.target).is('#updateModal')) {
                     closeModal();
@@ -122,7 +121,6 @@
     </script>
 
     <style>
-        /* Стили для модального окна */
         .modal {
             display: none;
             position: fixed;

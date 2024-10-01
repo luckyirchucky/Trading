@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:sec="http://www.springframework.org/security/tags" lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Управление моими данными</title>
@@ -28,7 +28,7 @@
             $('#phoneNumber').text(user.phoneNumber);
             $('#email').text(user.email);
 
-            $('#cardNumberDisplay').text('•••• •••• •••• ' + user.bankAccount.cardNumber.slice(-4));
+            $('#cardNumberDisplay').text('••••••••••••' + user.bankAccount.cardNumber.slice(-4));
             $('#cardholderNameDisplay').text(user.bankAccount.cardholderName);
             $('#expirationDateDisplay').text('••/••');
             $('#cvvDisplay').text('•••');
@@ -98,9 +98,10 @@
         }
 
         function openBankAccountModal() {
-            $('#cardNumberInput').val($('#cardNumberDisplay').text());
-            $('#cardholderNameInput').val($('#cardholderNameDisplay').text());
-            $('#expirationDateInput').val($('#expirationDateDisplay').text());
+            $('#cardNumberInput').text();
+            $('#cardholderNameInput').text();
+            $('#expirationDateInput').text();
+            $('#cvvInput').text();
 
             $('#bankAccountModal').show();
         }
@@ -174,7 +175,6 @@
     </script>
 
     <style>
-        /* Стили для модального окна */
         .modal {
             display: none;
             position: fixed;
@@ -209,24 +209,20 @@
         .navigate-button {
             margin: 20px;
             padding: 10px 15px;
-            background-color: #007BFF; /* Цвет кнопки */
+            background-color: #007BFF;
             color: white;
             border: none;
-            border-radius: 5px; /* Скругление углов */
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 16px; /* Размер текста */
+            font-size: 16px;
         }
         .navigate-button:hover {
-            background-color: #0056b3; /* Цвет при наведении */
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-<div>
-    <sec:authorize access="isAuthenticated()">
-        <h4><a href="/logout">Выйти</a></h4>
-    </sec:authorize>
-</div>
+
 <button class="navigate-button" onclick="window.location.href='/usersPage'">Назад</button>
 
 <div>
@@ -253,7 +249,6 @@
     <button class="navigate-button" onclick="openUserModal()">Обновить мои данные</button>
 </div>
 
-<!-- Modal для редактирования данных пользователя -->
 <div id="userModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeUserModal()">&times;</span>
@@ -268,7 +263,6 @@
     </div>
 </div>
 
-<!-- Modal для редактирования данных банковского аккаунта -->
 <div id="bankAccountModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeBankAccountModal()">&times;</span>
