@@ -3,22 +3,82 @@
 <head>
     <meta charset="utf-8">
     <title>Войти в свой аккаунт</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f2f2f2;
+        }
+
+        .login-form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+        .login-button {
+            background-color: #007bff; /* Цвет кнопки Войти */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 30px;
+            font-size: 16px;
+        }
+
+        .login-button:hover {
+            background-color: #0056b3;
+        }
+
+        .registration-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .register-button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 5px;
+            font-size: 18px;
+        }
+
+        .register-button:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
-<div>
+<div class="login-form">
     <form method="POST" action="/login">
         <h2>Вход в систему</h2>
-        <div>
-            <label>
-                <input name="username" type="text" placeholder="Имя пользователя" autofocus="autofocus"/>
-            </label>
-            <label>
-                <input name="password" type="password" placeholder="Пароль"/>
-            </label>
-            <button type="submit">Войти</button>
-            <h4><a href="/registration">Зарегистрироваться</a></h4>
-        </div>
+        <label>
+            <input name="username" type="text" placeholder="Имя пользователя" autofocus="autofocus" required/>
+        </label><br>
+        <label>
+            <input name="password" type="password" placeholder="Пароль" required/>
+        </label><br>
+        <button type="submit" class="login-button">Войти</button>
     </form>
+
+    <div class="registration-link">
+        <h4>Еще нет аккаунта?</h4>
+        <a href="/registration" class="register-button">Зарегистрироваться</a>
+    </div>
 </div>
 </body>
 </html>

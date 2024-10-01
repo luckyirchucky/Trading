@@ -1,15 +1,80 @@
 <!DOCTYPE HTML>
 <html xmlns:sec="http://www.springframework.org/security/tags" lang="en">
 <head>
-    <title>Главная</title>
+    <title>Crypto coins</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgba(248, 249, 250, 0.8);
+            border-bottom: 1px solid #dee2e6;
+            color: #0056b3;
+        }
+
+        .login-button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .login-button:hover {
+            background-color: #0056b3;
+        }
+
+        .content {
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        body {
+            background-image: url("https://cdn.plus500.com/Media/ArticlesMain/What_Is_Cryptocurrency_Trading@0,75x.png");
+            background-size: 50% auto;
+            background-position: center 100px;
+            background-repeat: no-repeat;
+            margin: 0;
+        }
+
+        .content h2 {
+            margin-top: 420px;
+            color: #0056b3;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: rgba(248, 249, 250, 0.8);
+            border-top: 1px solid #dee2e6;
+            width: 100%;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+        }
+    </style>
 </head>
 <body>
-<div>
+
+<div class="header">
+    <h1>Crypto coins</h1>
     <sec:authorize access="!isAuthenticated()">
-        <h4><a href="/login">Войти</a></h4>
+        <button class="login-button" onclick="location.href='/login'">Войти</button>
     </sec:authorize>
 </div>
+
+<div class="content">
+    <h2>Добро пожаловать на фондовую площадку</h2>
+</div>
+
+<div class="footer">
+    <p>© 2024 Crypto coins platform. Все права защищены.</p>
+</div>
+
 </body>
 </html>
