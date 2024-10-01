@@ -12,7 +12,7 @@
                 url: '/users',
                 type: 'GET',
                 success: function(users) {
-                    $('#users-table-body').empty(); // Очистка перед добавлением новых данных
+                    $('#users-table-body').empty();
                     users.forEach(function(user) {
                         const row = "<tr data-user-id='" + user.id + "'>" +
                             "<td data-username='" + user.username + "'>" + user.username + "</td>" +

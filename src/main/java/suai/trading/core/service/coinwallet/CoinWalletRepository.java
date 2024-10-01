@@ -1,8 +1,13 @@
 package suai.trading.core.service.coinwallet;
 
 import suai.trading.core.service.JpaRepository;
-import suai.trading.core.service.client.Client;
+
+import java.util.List;
+import java.util.UUID;
 
 public interface CoinWalletRepository extends JpaRepository<CoinWallet> {
-    CoinWallet findCoinWalletByClient(Client client);
+
+    List<CoinWallet> findCoinWalletsByClientId(UUID client);
+    void deleteCoinById(UUID id);
+    //void deleteCoin(CoinView coin);
 }

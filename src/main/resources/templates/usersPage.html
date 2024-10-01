@@ -195,13 +195,13 @@
                         };
 
                         $.ajax({
-                            url: '/coinwallet/purchase',
+                            url: '/coinwallet',
                             type: 'POST',
                             contentType: 'application/json',
                             data: JSON.stringify(command),
-                            success: function(response) {
-                                $('#purchaseModal').hide(); // Закрытие модального окна
-                                $('#coinAmount').val(1); // Сброс значения
+                            success: function() {
+                                $('#purchaseModal').hide();
+                                $('#coinAmount').val(1);
                             },
                             error: function(xhr, status, error) {
                                 $('#purchaseMessage').text('Ошибка при покупке: ' + error);

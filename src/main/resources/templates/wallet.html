@@ -17,9 +17,100 @@
         .navigate-button:hover {
             background-color: #0056b3; /* Цвет при наведении */
         }
+        .coin-wallet {
+            margin: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .coin {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .delete-button {
+            margin-left: 10px;
+            background-color: #dc3545; /* Цвет кнопки удаления */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .delete-button:hover {
+            background-color: #c82333; /* Цвет при наведении на кнопку удаления */
+        }
     </style>
 </head>
 <body>
-    <button class="navigate-button" onclick="window.location.href='/usersPage'">Назад</button>
+
+<button class="navigate-button" onclick="window.location.href='/usersPage'">Назад</button>
+
+<div id="coinWalletContainer"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function loadCoinWallet() {
+        $.ajax({
+            url: '/coinwallet',
+            type: 'GET',
+            success: function(wallets) {
+                const container = $('#coinWalletContainer');
+                container.empty();
+
+                wallets.forEach(function(wallet) {
+                    if (!isValidUUID(wallet.id)) {
+                        console.error("Invalid UUID for wallet:", wallet);
+                        return;
+                    }
+
+                    container.append(`
+                    <div class="coin-wallet">
+                        <div class="coin">
+                            <span>Монета: ${wallet.coin}</span>
+                            <span>Количество: ${wallet.count}</span>
+                            <span>Стоимость за монету: ${wallet.costPerOneCoin} $</span>
+                            <span>Общая стоимость: ${wallet.totalCost} $</span>
+                            <button class="delete-button" data-id="${wallet.id}">Продать</button>
+                        </div>
+                    </div>
+                `);
+                });
+
+                $('.delete-button').off('click').on('click', function() {
+                    const id = $(this).data('id');
+                    if (id) {
+                        deleteCoin(id);
+                    }
+                });
+            },
+            error: function(xhr) {
+                console.error("Ошибка загрузки кошельков:", xhr);
+            }
+        });
+    }
+
+    function isValidUUID(uuid) {
+        const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        return regex.test(uuid);
+    }
+
+    function deleteCoin(id) {
+        $.ajax({
+            url: `/coinwallet/${id}`,
+            type: 'DELETE',
+            success: function() {
+                console.log(`Монета с ID ${id} успешно удалена.`);
+                loadCoinWallet();
+            },
+            error: function(xhr) {
+                console.error("Ошибка при удалении монеты:", xhr);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        loadCoinWallet();
+    });
+</script>
 </body>
 </html>

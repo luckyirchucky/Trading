@@ -13,7 +13,7 @@ import suai.trading.core.service.coinwallet.CoinWalletRepository;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CoinWalletCommandServiceImpl implements CoinWalletCommandService {
+public class CoinWalletWalletCommandServiceImpl implements CoinWalletCommandService {
 
     private final CoinWalletRepository coinWalletRepository;
     private final CurrentClient currentClient;

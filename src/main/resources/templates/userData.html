@@ -1,9 +1,211 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:sec="http://www.springframework.org/security/tags" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Мои данные</title>
+    <title>Управление моими данными</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/resources/css/style.css}"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script th:inline="javascript">
+        function getUser() {
+            $.ajax({
+                url: '/users/current',
+                type: 'GET',
+                success: function(user) {
+                    displayUserData(user);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                    alert("Ошибка загрузки данных.");
+                }
+            });
+        }
+
+        function displayUserData(user) {
+            $('#lastName').text(user.lastName);
+            $('#firstName').text(user.firstName);
+            $('#middleName').text(user.middleName);
+            $('#dateOfBirth').text(user.dateOfBirth);
+            $('#phoneNumber').text(user.phoneNumber);
+            $('#email').text(user.email);
+
+            $('#cardNumberDisplay').text('•••• •••• •••• ' + user.bankAccount.cardNumber.slice(-4));
+            $('#cardholderNameDisplay').text(user.bankAccount.cardholderName);
+            $('#expirationDateDisplay').text('••/••');
+            $('#cvvDisplay').text('•••');
+        }
+
+        function openUserModal() {
+            $('#lastNameInput').val($('#lastName').text());
+            $('#firstNameInput').val($('#firstName').text());
+            $('#middleNameInput').val($('#middleName').text());
+            $('#dateOfBirthInput').val($('#dateOfBirth').text());
+            $('#phoneNumberInput').val($('#phoneNumber').text());
+            $('#emailInput').val($('#email').text());
+
+            $('#userModal').show();
+        }
+
+        function closeUserModal() {
+            $('#userModal').hide();
+        }
+
+        function saveUserData() {
+            const userId = $('#updateUserId').val();
+            const updatedUser = {
+                lastName: $('#lastName').val(),
+                firstName: $('#firstName').val(),
+                middleName: $('#middleName').val(),
+                dateOfBirth: $('#dateOfBirth').val(),
+                phoneNumber: $('#phoneNumber').val(),
+                email: $('#email').val()
+            };
+            $.ajax({
+                url: '/users/' + userId,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(updatedUser),
+                success: function() {
+                    alert('Данные успешно обновлены!');
+                    getUser();
+                    closeModal();
+                },
+                error: function(xhr) {
+                    if (xhr.status === 400) {
+                        alert("Ошибка при вводе данных.");
+                    } else if (xhr.status === 404) {
+                        alert("Пользователь не найден.");
+                    } else {
+                        alert("Произошла ошибка. Пожалуйста, попробуйте позже.");
+                    }
+                }
+            });
+            alert('Данные пользователя успешно обновлены!');
+            closeUserModal();
+            displayUserData({
+                lastName: $('#lastNameInput').val(),
+                firstName: $('#firstNameInput').val(),
+                middleName: $('#middleNameInput').val(),
+                dateOfBirth: $('#dateOfBirthInput').val(),
+                phoneNumber: $('#phoneNumberInput').val(),
+                email: $('#emailInput').val(),
+                bankAccount: {
+                    cardNumber: $('#cardNumberInput').val(),
+                    cardholderName: $('#cardholderNameInput').val(),
+                    expirationDate: $('#expirationDateInput').val(),
+                    cvv: $('#cvvInput').val()
+                }
+            });
+        }
+
+        function openBankAccountModal() {
+            $('#cardNumberInput').val($('#cardNumberDisplay').text());
+            $('#cardholderNameInput').val($('#cardholderNameDisplay').text());
+            $('#expirationDateInput').val($('#expirationDateDisplay').text());
+
+            $('#bankAccountModal').show();
+        }
+
+        function saveBankAccountData() {
+            const updatedBankAccount = {
+                cardNumber: $('#cardNumberInput').val(),
+                cardholderName: $('#cardholderNameInput').val(),
+                expirationDate: $('#expirationDateInput').val(),
+                cvv: $('#cvvInput').val()
+            };
+
+            $.ajax({
+                url: '/bank-account',
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(updatedBankAccount),
+                success: function() {
+                    alert('Данные банковского аккаунта успешно обновлены!');
+                    getUser();
+                    closeBankAccountModal();
+                },
+                error: function() {
+                    alert("Ошибка при обновлении банковского аккаунта. Пожалуйста, попробуйте позже.");
+                }
+            });
+
+            alert('Данные банковского аккаунта успешно обновлены!');
+            closeBankAccountModal();
+            $('#cardNumberDisplay').text('•••• •••• •••• ' + $('#cardNumberInput').val().slice(-4));
+        }
+
+        function closeModal() {
+            $('#updateModal').hide();
+            clearUpdateForm();
+        }
+
+        function closeBankAccountModal() {
+            $('#bankAccountModal').hide();
+            clearBankAccountForm();
+        }
+
+        function clearUpdateForm() {
+            $('#lastName').val('');
+            $('#firstName').val('');
+            $('#middleName').val('');
+            $('#dateOfBirth').val('');
+            $('#phoneNumber').val('');
+            $('#email').val('');
+            $('#updateUserId').val('');
+        }
+
+        function clearBankAccountForm() {
+            $('#cardNumber').val('');
+            $('#cardholderName').val('');
+            $('#expirationDate').val('');
+            $('#cvv').val('');
+        }
+
+        $(document).ready(function() {
+            getUser();
+
+            $(window).click(function(event) {
+                if ($(event.target).is('#updateModal')) {
+                    closeModal();
+                } else if ($(event.target).is('#bankAccountModal')) {
+                    closeBankAccountModal();
+                }
+            });
+        });
+    </script>
+
     <style>
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
         .navigate-button {
             margin: 20px;
             padding: 10px 15px;
@@ -20,6 +222,63 @@
     </style>
 </head>
 <body>
-    <button class="navigate-button" onclick="window.location.href='/usersPage'">Назад</button>
+<div>
+    <sec:authorize access="isAuthenticated()">
+        <h4><a href="/logout">Выйти</a></h4>
+    </sec:authorize>
+</div>
+<button class="navigate-button" onclick="window.location.href='/usersPage'">Назад</button>
+
+<div>
+    <h2>Мои данные</h2>
+    <div>
+        <input type="hidden" id="updateUserId">
+        <p>Фамилия: <span id="lastName">Иванов</span></p>
+        <p>Имя: <span id="firstName">Иван</span></p>
+        <p>Отчество: <span id="middleName">Иванович</span></p>
+        <p>Дата рождения: <span id="dateOfBirth">01.01.1990</span></p>
+        <p>Номер телефона: <span id="phoneNumber">+7 123 456-78-90</span></p>
+        <p>Email: <span id="email">ivanov@example.com</span></p>
+    </div>
+
+    <h3>Данные банковского аккаунта</h3>
+    <div id="bankAccountDisplay">
+        <p>Номер карты: <span id="cardNumberDisplay">•••• •••• •••• ••••</span></p>
+        <p>Имя владельца: <span id="cardholderNameDisplay">Иванов Иван</span></p>
+        <p>Срок действия: <span id="expirationDateDisplay">**/**</span></p>
+        <p>Cvv: <span id="cvvDisplay">***</span></p>
+    </div>
+    <button onclick="openBankAccountModal()">Обновить данные банковского счета</button>
+
+    <button class="navigate-button" onclick="openUserModal()">Обновить мои данные</button>
+</div>
+
+<!-- Modal для редактирования данных пользователя -->
+<div id="userModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeUserModal()">&times;</span>
+        <h2>Обновить мои данные</h2>
+        <p>Фамилия: <input type="text" id="lastNameInput" placeholder="Фамилия"></p>
+        <p>Имя: <input type="text" id="firstNameInput" placeholder="Имя"></p>
+        <p>Отчество: <input type="text" id="middleNameInput" placeholder="Отчество"></p>
+        <p>Дата рождения: <input type="date" id="dateOfBirthInput"></p>
+        <p>Номер телефона: <input type="text" id="phoneNumberInput" placeholder="Номер телефона"></p>
+        <p>Email: <input type="email" id="emailInput" placeholder="Email"></p>
+        <button onclick="saveUserData()">Сохранить</button>
+    </div>
+</div>
+
+<!-- Modal для редактирования данных банковского аккаунта -->
+<div id="bankAccountModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeBankAccountModal()">&times;</span>
+        <h2>Обновить данные банковского счета</h2>
+        <p>Номер карты: <input type="text" id="cardNumberInput" placeholder="Номер карты"></p>
+        <p>Имя владельца: <input type="text" id="cardholderNameInput" placeholder="Имя владельца"></p>
+        <p>Срок действия: <input type="text" id="expirationDateInput" placeholder="Срок действия (MM/YY)"></p>
+        <p>Cvv: <input type="text" id="cvvInput" placeholder="***"></p>
+        <button onclick="saveBankAccountData()">Сохранить</button>
+    </div>
+</div>
 </body>
 </html>

@@ -18,6 +18,7 @@ public class CoinWalletConverter extends AbstractEntityConverter<CoinWallet, Coi
     @Override
     public CoinWalletView convertToView(CoinWallet entity) {
         return CoinWalletView.builder()
+                .id(entity.getId())
                 .coin(entity.getCoin())
                 .count(entity.getCount())
                 .costPerOneCoin(entity.getCostPerOneCoin())
