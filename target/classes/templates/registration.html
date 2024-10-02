@@ -6,14 +6,34 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* Полная высота для центрирования */
+            background-color: #f2f2f2; /* Цвет фона */
+            position: relative; /* Для позиционирования кнопки */
+        }
+        #registrationForm {
+            background: white;
+            border-radius: 8px; /* Скруглённые углы */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Тень */
+            padding: 20px;
+            width: 100%;
+            max-width: 400px; /* Максимальная ширина формы */
+            box-sizing: border-box; /* Учитывает внутренние отступы */
+            margin-top: 300px; /* Добавлен отступ сверху */
+            margin-bottom: 30px;
         }
         input {
             display: block;
             margin-bottom: 10px;
             padding: 8px;
             width: 100%;
-            max-width: 300px;
+            border-radius: 5px; /* Скруглённые углы */
+            border: 1px solid #ccc; /* Граница */
+            box-sizing: border-box; /* Учитывает внутренние отступы */
         }
         .error {
             border: 2px solid red;
@@ -21,53 +41,66 @@
         .hidden {
             display: none;
         }
+        .home-link {
+            position: absolute; /* Абсолютное позиционирование */
+            top: 20px; /* Отступ сверху */
+            right: 20px; /* Отступ справа */
+            text-decoration: none;
+            color: #007bff; /* Цвет ссылки */
+            font-size: 16px; /* Размер текста ссылки */
+        }
+        .registration-button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .registration-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
+<a href="/" class="home-link">На главную</a>
+
 <div>
     <form id="registrationForm">
         <h2>Регистрация</h2>
-
         <div>
             <label for="userName">Имя пользователя</label>
             <input id="userName" name="userName" type="text" placeholder="имя пользователя" required autofocus/>
         </div>
-
         <div>
             <label for="lastName">Фамилия</label>
             <input id="lastName" name="lastName" type="text" placeholder="фамилия" required />
         </div>
-
         <div>
             <label for="firstName">Имя</label>
             <input id="firstName" name="firstName" type="text" placeholder="имя" required />
         </div>
-
         <div>
             <label for="middleName">Отчество</label>
             <input id="middleName" name="middleName" type="text" placeholder="отчество" />
         </div>
-
         <div>
             <label for="email">Email</label>
             <input id="email" name="email" type="email" placeholder="email" required />
         </div>
-
         <div>
             <label for="phoneNumber">Номер телефона</label>
             <input id="phoneNumber" name="phoneNumber" type="tel" placeholder="+7хххххххххх" required />
         </div>
-
         <div>
             <label for="dateOfBirth">Дата рождения</label>
             <input id="dateOfBirth" name="dateOfBirth" type="date" required />
         </div>
-
         <div>
             <label for="password">Придумайте пароль от 5 символов</label>
-            <input id="password" name="password" type="password" placeholder="ххххх" required />
+            <input id="password" name="password" type="password" placeholder="ххххх..." required />
         </div>
-
         <h3>Информация о банковском аккаунте</h3>
         <div>
             <label for="cardNumber">Номер карты</label>
@@ -85,12 +118,9 @@
             <label for="cvv">Cvv</label>
             <input id="cvv" name="cvv" type="text" placeholder="***" required />
         </div>
-
-        <button type="submit">Зарегистрироваться</button>
+        <button class="registration-button" type="submit">Зарегистрироваться</button>
     </form>
-
     <p id="registrationResult" class="hidden"></p>
-    <a href="/">Главная</a>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
