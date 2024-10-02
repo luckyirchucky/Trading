@@ -6,56 +6,56 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: rgba(248, 249, 250, 0.8);
-            border-bottom: 1px solid #dee2e6;
-            color: #0056b3;
+            display: flex; /* Использует flexbox для выстраивания элементов в строку */
+            justify-content: space-between; /* Распределяет пространство между элементами */
+            align-items: center; /* Центрирует элементы по вертикали внутри заголовка */
+            padding: 10px 20px; /* Внутренние отступы: 10px сверху и снизу, 20px слева и справа */
+            background-color: rgba(248, 249, 250, 0.8); /* Полупрозрачный фоновый цвет для заголовка */
+            border-bottom: 1px solid #dee2e6; /* Нижняя граница для визуального разделения */
+            color: #0056b3; /* Цвет текста заголовка */
         }
 
         .login-button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
+            padding: 10px 15px; /* Внутренние отступы: 10px сверху и снизу, 15px слева и справа */
+            background-color: #007bff; /* Синий цвет кнопки входа */
+            color: white; /* Цвет текста кнопки (белый) */
+            border: none; /* Убирает границу кнопки */
+            border-radius: 5px; /* Скругляет углы кнопки */
+            cursor: pointer; /* Указывает, что кнопка кликабельная */
+            font-size: 16px; /* Размер шрифта для текста кнопки */
         }
 
         .login-button:hover {
-            background-color: #0056b3;
+            background-color: #0056b3; /* Темный цвет кнопки при наведении */
         }
 
         .content {
-            text-align: center;
-            margin-top: 80px;
+            text-align: center; /* Центрирует текст внутри блока контента */
+            margin-top: 80px; /* Отступ сверху для создания пространства над контентом */
         }
 
         body {
-            background-image: url("https://cdn.plus500.com/Media/ArticlesMain/What_Is_Cryptocurrency_Trading@0,75x.png");
-            background-size: 50% auto;
-            background-position: center 100px;
-            background-repeat: no-repeat;
-            margin: 0;
+            background-image: url("https://cdn.plus500.com/Media/ArticlesMain/What_Is_Cryptocurrency_Trading@0,75x.png"); /* Устанавливает фоновое изображение для страницы */
+            background-size: 50% auto; /* Масштабирует изображение до 50% ширины, авто- высота */
+            background-position: center 100px; /* Центрирует изображение по горизонтали и указывает 100px от верхнего края */
+            background-repeat: no-repeat; /* Отключает повторение фонового изображения */
+            margin: 0; /* Убирает стандартные отступы браузера */
         }
 
         .content h2 {
-            margin-top: 420px;
-            color: #0056b3;
+            margin-top: 420px; /* Устанавливает большой верхний отступ для заголовка h2 */
+            color: #0056b3; /* Цвет текста заголовка (синий) */
         }
 
         .footer {
-            text-align: center;
-            padding: 10px 0;
-            background-color: rgba(248, 249, 250, 0.8);
-            border-top: 1px solid #dee2e6;
-            width: 100%;
-            position: fixed;
-            left: 0;
-            bottom: 0;
+            text-align: center; /* Центрирует текст в нижнем колонтитуле */
+            padding: 10px 0; /* Вертикальные отступы: 10px сверху и снизу */
+            background-color: rgba(248, 249, 250, 0.8); /* Полупрозрачный фон для нижнего колонтитула */
+            border-top: 1px solid #dee2e6; /* Верхняя граница для отделения от остального контента */
+            width: 100%; /* Занимает 100% ширины родительского элемента */
+            position: fixed; /* Фиксирует футер на месте при прокрутке страницы */
+            left: 0; /* Прижимает к левому краю */
+            bottom: 0; /* Прижимает к нижнему краю */
         }
     </style>
 </head>

@@ -3,65 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <title>Мои активы</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function loadCoinWallet() {
+            $.ajax({
+                url: '/coinwallet',
+                type: 'GET',
+                success: function(wallets) {
+                    const container = $('#coinWalletContainer');
+                    container.empty();
+
+                    wallets.forEach(function(wallet) {
+                        if (!isValidUUID(wallet.id)) {
+                            console.error("Invalid UUID for wallet:", wallet);
+                            return;
+                        }
+
+                        container.append(`
+                        <div class="coin-wallet">
+                            <div class="coin">
+                                <span>Монета: ${wallet.coin}</span>
+                                <span>Количество: ${wallet.count}</span>
+                                <span>Стоимость за монету: ${wallet.costPerOneCoin} $</span>
+                                <span>Общая стоимость: ${wallet.totalCost} $</span>
+                                <button class="delete-button" data-id="${wallet.id}">Продать</button>
+                            </div>
+                        </div>
+                    `);
+                    });
+
+                    $('.delete-button').off('click').on('click', function() {
+                        const id = $(this).data('id');
+                        if (id) {
+                            deleteCoin(id);
+                        }
+                    });
+                },
+                error: function(xhr) {
+                    console.error("Ошибка загрузки кошельков:", xhr);
+                }
+            });
+        }
+
+        function isValidUUID(uuid) {
+            const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            return regex.test(uuid);
+        }
+
+        function deleteCoin(id) {
+            $.ajax({
+                url: `/coinwallet/${id}`,
+                type: 'DELETE',
+                success: function() {
+                    console.log(`Монета с ID ${id} успешно удалена.`);
+                    loadCoinWallet();
+                },
+                error: function(xhr) {
+                    console.error("Ошибка при удалении монеты:", xhr);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            loadCoinWallet();
+        });
+    </script>
+
     <style>
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: rgba(248, 249, 250, 0.8);
-            border-bottom: 1px solid #dee2e6;
-            color: #0056b3;
+            display: flex; /* Использует flexbox для упрощенного выстраивания элементов в одной строке */
+            justify-content: space-between; /* Распределяет элементы с пробелами между ними */
+            align-items: center; /* Центрирует элементы по вертикали */
+            padding: 10px 20px; /* Внутренние отступы: 10px сверху и снизу, 20px слева и справа */
+            background-color: rgba(248, 249, 250, 0.8); /* Полупрозрачный фоновый цвет для заголовка */
+            border-bottom: 1px solid #dee2e6; /* Нижняя граница для визуального разделения */
+            color: #0056b3; /* Цвет текста заголовка */
         }
+
         .navigate-button {
-            margin: 20px;
-            padding: 10px 15px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
+            margin: 20px; /* Отступы вокруг кнопки навигации */
+            padding: 10px 15px; /* Внутренние отступы: 10px сверху и снизу, 15px слева и справа */
+            background-color: #007BFF; /* Синий цвет для кнопки */
+            color: white; /* Цвет текста кнопки (белый) */
+            border: none; /* Убирает границу кнопки */
+            border-radius: 5px; /* Скругляет углы кнопки */
+            cursor: pointer; /* Указывает, что кнопка кликабельная */
+            font-size: 16px; /* Размер шрифта для текста кнопки */
         }
+
         .navigate-button:hover {
-            background-color: #0056b3;
+            background-color: #0056b3; /* Темный синий цвет кнопки при наведении */
         }
+
         .coin-wallet {
-            margin: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            margin: 20px; /* Отступы вокруг элемента "кошелек" */
+            padding: 10px; /* Внутренние отступы для элемента "кошелек" */
+            border: 1px solid #ccc; /* Светло-серая граница для отделения от фона */
+            border-radius: 5px; /* Скругляет углы элемента "кошелек" */
         }
+
         .coin {
-            display: flex;
-            justify-content: space-between;
-            align-items: center; /* Центрируем элементы по вертикали */
-            margin-bottom: 10px;
-            font-size: 18px; /* Увеличиваем размер текста внутри отображаемых данных */
+            display: flex; /* Использует flexbox для выстраивания элементов внутри контейнера "монеты" */
+            justify-content: space-between; /* Распределяет элементы по горизонтали */
+            align-items: center; /* Центрирует элементы по вертикали */
+            margin-bottom: 10px; /* Отступ снизу для разделения между элементами "монеты" */
+            font-size: 18px; /* Увеличивает размер текста для отображаемых данных "монеты" */
         }
+
         .delete-button {
-            margin-left: 10px;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            padding: 10px 15px; /* Сделаем кнопки одинакового размера */
-            font-size: 16px; /* Одинаковый размер текста */
+            margin-left: 10px; /* Отступ слева для кнопки удаления */
+            background-color: #dc3545; /* Красный цвет для кнопки "Удалить" */
+            color: white; /* Цвет текста кнопки (белый) */
+            border: none; /* Убирает границу кнопки */
+            border-radius: 5px; /* Скругляет углы кнопки */
+            cursor: pointer; /* Указывает, что кнопка кликабельная */
+            padding: 10px 15px; /* Устанавливает внутренние отступы, чтобы кнопки были одинакового размера */
+            font-size: 16px; /* Размер шрифта для текста кнопки */
         }
+
         .delete-button:hover {
-            background-color: #c82333;
+            background-color: #c82333; /* Темнее красного цвета кнопки "Удалить" при наведении */
         }
+
         .footer {
-            text-align: center;
-            padding: 10px 0;
-            background-color: rgba(248, 249, 250, 0.8);
-            border-top: 1px solid #dee2e6;
-            width: 100%;
-            position: fixed; /* Устанавливаем фиксированное позиционирование */
-            left: 0;
-            bottom: 0;
-            z-index: 1000; /* На случай, если другие элементы могут перекрыть футер */
+            text-align: center; /* Центрирует текст в нижнем колонтитуле */
+            padding: 10px 0; /* Вертикальные отступы: 10px сверху и снизу */
+            background-color: rgba(248, 249, 250, 0.8); /* Полупрозрачный фон для нижнего колонтитула */
+            border-top: 1px solid #dee2e6; /* Верхняя граница для отделения от остального контента */
+            width: 100%; /* Занимает 100% ширины родительского элемента */
+            position: fixed; /* Фиксирует футер на месте при прокрутке страницы */
+            left: 0; /* Прижимает к левому краю */
+            bottom: 0; /* Прижимает к нижнему краю */
+            z-index: 1000; /* Устанавливает уровень наложения, чтобы футер был над другими элементами */
         }
     </style>
 </head>
@@ -75,72 +148,6 @@
 </div>
 
 <div id="coinWalletContainer"></div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    function loadCoinWallet() {
-        $.ajax({
-            url: '/coinwallet',
-            type: 'GET',
-            success: function(wallets) {
-                const container = $('#coinWalletContainer');
-                container.empty();
-
-                wallets.forEach(function(wallet) {
-                    if (!isValidUUID(wallet.id)) {
-                        console.error("Invalid UUID for wallet:", wallet);
-                        return;
-                    }
-
-                    container.append(`
-                        <div class="coin-wallet">
-                            <div class="coin">
-                                <span>Монета: ${wallet.coin}</span>
-                                <span>Количество: ${wallet.count}</span>
-                                <span>Стоимость за монету: ${wallet.costPerOneCoin} $</span>
-                                <span>Общая стоимость: ${wallet.totalCost} $</span>
-                                <button class="delete-button" data-id="${wallet.id}">Продать</button>
-                            </div>
-                        </div>
-                    `);
-                });
-
-                $('.delete-button').off('click').on('click', function() {
-                    const id = $(this).data('id');
-                    if (id) {
-                        deleteCoin(id);
-                    }
-                });
-            },
-            error: function(xhr) {
-                console.error("Ошибка загрузки кошельков:", xhr);
-            }
-        });
-    }
-
-    function isValidUUID(uuid) {
-        const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        return regex.test(uuid);
-    }
-
-    function deleteCoin(id) {
-        $.ajax({
-            url: `/coinwallet/${id}`,
-            type: 'DELETE',
-            success: function() {
-                console.log(`Монета с ID ${id} успешно удалена.`);
-                loadCoinWallet();
-            },
-            error: function(xhr) {
-                console.error("Ошибка при удалении монеты:", xhr);
-            }
-        });
-    }
-
-    $(document).ready(function() {
-        loadCoinWallet();
-    });
-</script>
 
 <div class="footer">
     <p>© 2024 Crypto coins platform. Все права защищены.</p>

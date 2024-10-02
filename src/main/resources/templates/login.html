@@ -5,60 +5,60 @@
     <title>Войти в свой аккаунт</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f2f2f2;
+            display: flex; /* Использует flexbox для выравнивания содержимого */
+            justify-content: center; /* Центрирует содержимое по горизонтали */
+            align-items: center; /* Центрирует содержимое по вертикали */
+            height: 100vh; /* Задает высоту равной высоте видимой части страницы */
+            margin: 0; /* Убирает стандартные отступы браузера */
+            background-color: #f2f2f2; /* Светлый фон для всей страницы */
         }
 
         .login-form {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 350px;
-            text-align: center;
+            background-color: white; /* Белый фон для формы входа */
+            padding: 30px; /* Внутренние отступы для формы */
+            border-radius: 8px; /* Скругляет углы формы */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Создает легкую тень для добавления глубины */
+            width: 350px; /* Устанавливает фиксированную ширину формы */
+            text-align: center; /* Центрирует текст внутри формы */
         }
 
         .login-button {
-            background-color: #007bff; /* Цвет кнопки Войти */
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 30px;
-            font-size: 16px;
+            background-color: #007bff; /* Цвет кнопки Войти (синий) */
+            color: white; /* Цвет текста кнопки (белый) */
+            padding: 10px 15px; /* Внутренние отступы для кнопки */
+            border: none; /* Убирает границу кнопки */
+            border-radius: 5px; /* Скругляет углы кнопки */
+            cursor: pointer; /* Указывает, что кнопка кликабельная */
+            text-decoration: none; /* Убирает подчеркивание при использовании как ссылки */
+            display: inline-block; /* Позволяет устанавливать поля и отступы как блочному элементу */
+            margin-top: 30px; /* Отступ сверху, чтобы отделить от других элементов */
+            font-size: 16px; /* Размер шрифта для текста кнопки */
         }
 
         .login-button:hover {
-            background-color: #0056b3;
+            background-color: #0056b3; /* Темный цвет кнопки при наведении */
         }
 
         .registration-link {
-            text-align: center;
-            margin-top: 15px;
+            text-align: center; /* Центрирует текст в блоке ссылки регистрации */
+            margin-top: 15px; /* Отступ сверху для отделения от других элементов */
         }
 
         .register-button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 5px;
-            font-size: 18px;
+            background-color: #28a745; /* Цвет кнопки Регистрация (зеленый) */
+            color: white; /* Цвет текста кнопки (белый) */
+            padding: 10px 15px; /* Внутренние отступы для кнопки */
+            border: none; /* Убирает границу кнопки */
+            border-radius: 5px; /* Скругляет углы кнопки */
+            cursor: pointer; /* Указывает, что кнопка кликабельная */
+            text-decoration: none; /* Убирает подчеркивание при использовании как ссылки */
+            display: inline-block; /* Позволяет устанавливать поля и отступы как блочному элементу */
+            margin-top: 5px; /* Отступ сверху для отделения от других элементов */
+            font-size: 18px; /* Увеличивает размер шрифта для кнопки регистрации */
         }
 
         .register-button:hover {
-            background-color: #218838;
+            background-color: #218838; /* Темнее зеленого цвета кнопки Регистрация при наведении */
         }
     </style>
 </head>

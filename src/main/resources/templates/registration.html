@@ -3,63 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <title>Регистрация</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#registrationForm').submit(function(event) {
+                event.preventDefault();
+
+                $('.error').removeClass('error');
+                $('#registrationResult').addClass('hidden').text('');
+
+                const userName = $('#userName').val().trim();
+                const lastName = $('#lastName').val().trim();
+                const firstName = $('#firstName').val().trim();
+                const middleName = $('#middleName').val().trim();
+                const email = $('#email').val().trim();
+                const phoneNumber = $('#phoneNumber').val().trim();
+                const dateOfBirth = $('#dateOfBirth').val();
+                const password = $('#password').val().trim();
+
+                const cardNumber = $('#cardNumber').val().trim();
+                const cardholderName = $('#cardholderName').val().trim();
+                const expirationDate = $('#expirationDate').val().trim();
+                const cvv = $('#cvv').val().trim();
+
+                let hasError = false;
+                let errorMessage = "";
+
+                if (userName === '') {
+                    $('#userName').addClass('error');
+                    errorMessage += "Имя пользователя не может быть пустым.\n";
+                    hasError = true;
+                }
+
+                if (lastName === '') {
+                    $('#lastName').addClass('error');
+                    errorMessage += "Фамилия не может быть пустой.\n";
+                    hasError = true;
+                }
+
+                if (firstName === '') {
+                    $('#firstName').addClass('error');
+                    errorMessage += "Имя не может быть пустым.\n";
+                    hasError = true;
+                }
+
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(email)) {
+                    $('#email').addClass('error');
+                    errorMessage += "Некорректный email.\n";
+                    hasError = true;
+                }
+
+                const phonePattern = /^\+?[0-9. ()-]{7,25}$/;
+                if (!phonePattern.test(phoneNumber)) {
+                    $('#phoneNumber').addClass('error');
+                    errorMessage += "Некорректный номер телефона.\n";
+                    hasError = true;
+                }
+
+                const today = new Date();
+                const birthDate = new Date(dateOfBirth);
+                let age = today.getFullYear() - birthDate.getFullYear();
+                if (birthDate > today.setFullYear(today.getFullYear() - age)) {
+                    age--; // Если день рождения еще не пришел в этом году
+                }
+                if (age < 18) {
+                    $('#dateOfBirth').addClass('error');
+                    errorMessage += "Вы должны быть совершеннолетними (18 лет).\n";
+                    hasError = true;
+                }
+
+                if (password.length < 5) {
+                    $('#password').addClass('error');
+                    errorMessage += "Пароль должен содержать не менее 5 символов.\n";
+                    hasError = true;
+                }
+
+                const cardNumberPattern = /^\d{16,19}$/;
+                if (!cardNumberPattern.test(cardNumber)) {
+                    $('#cardNumber').addClass('error');
+                    errorMessage += "Некорректный номер карты. Должен содержать от 16 до 19 цифр.\n";
+                    hasError = true;
+                }
+
+                if (cardholderName === '') {
+                    $('#cardholderName').addClass('error');
+                    errorMessage += "Имя на карте не может быть пустым.\n";
+                    hasError = true;
+                }
+
+                const expirationDatePattern = /^(0[1-9]|1[0-2])\/[0-9]{2}$/;
+                if (!expirationDatePattern.test(expirationDate)) {
+                    $('#expirationDate').addClass('error');
+                    errorMessage += "Некорректный срок действия карты. Формат: MM/YY.\n";
+                    hasError = true;
+                }
+
+                const cvvPattern = /^\d{3}$/;
+                if (!cvvPattern.test(cvv)) {
+                    $('#cvv').addClass('error');
+                    errorMessage += "Некорректный CVV. Должен содержать 3 цифры.\n";
+                    hasError = true;
+                }
+
+                if (hasError) {
+                    $('#registrationResult').text("Пожалуйста, исправьте следующие ошибки:\n" + errorMessage).removeClass('hidden');
+                    return;
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/users',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        userName: userName,
+                        lastName: lastName,
+                        firstName: firstName,
+                        middleName: middleName,
+                        email: email,
+                        phoneNumber: phoneNumber,
+                        dateOfBirth: dateOfBirth,
+                        password: password,
+                        bankAccount: {
+                            cardNumber: cardNumber,
+                            cardholderName: cardholderName,
+                            expirationDate: expirationDate,
+                            cvv: cvv
+                        }
+                    }),
+                    success: function(response) {
+                        if (response.redirect) {
+                            window.location.href = response.redirect;
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 400) {
+                            $('#registrationResult').text("Ошибка валидации. Пожалуйста, проверьте ваши данные.").removeClass('hidden');
+                        } else if (xhr.status === 409) {
+                            $('#registrationResult').text("Пользователь уже существует. Пожалуйста, выберите другое имя пользователя.").removeClass('hidden');
+                        } else {
+                            $('#registrationResult').text("Произошла ошибка. Пожалуйста, попробуйте снова позже.").removeClass('hidden');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh; /* Полная высота для центрирования */
-            background-color: #f2f2f2; /* Цвет фона */
-            position: relative; /* Для позиционирования кнопки */
+            font-family: Arial, sans-serif; /* Задаёт шрифт для всего тела документа */
+            margin: 0; /* Убирает стандартные отступы браузера */
+            display: flex; /* Использует flexbox для управления расположением элементов */
+            flex-direction: column; /* Устанавливает направление элементов по вертикали */
+            align-items: center; /* Центрирует элементы по горизонтали */
+            justify-content: center; /* Центрирует элементы по вертикали */
+            height: 100vh; /* Задает полную высоту видимой области для центрирования */
+            background-color: #f2f2f2; /* Светлый цвет фона для всего документа */
+            position: relative; /* Устанавливает контекст для абсолютного позиционирования дочерних элементов */
         }
+
         #registrationForm {
-            background: white;
-            border-radius: 8px; /* Скруглённые углы */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Тень */
-            padding: 20px;
-            width: 100%;
-            max-width: 400px; /* Максимальная ширина формы */
-            box-sizing: border-box; /* Учитывает внутренние отступы */
-            margin-top: 300px; /* Добавлен отступ сверху */
-            margin-bottom: 30px;
+            background: white; /* Белый фон для формы регистрации */
+            border-radius: 8px; /* Скругляет углы формы */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Легкая тень для добавления глубины */
+            padding: 20px; /* Внутренние отступы для формы */
+            width: 100%; /* Ширина формы занимает 100% родительского элемента */
+            max-width: 400px; /* Устанавливает максимальную ширину формы */
+            box-sizing: border-box; /* Учитывает внутренние отступы и границы в общей ширине */
+            margin-top: 300px; /* Создаёт отступ сверху, чтобы отделить от других элементов */
+            margin-bottom: 30px; /* Отступ снизу для отделения от элементов ниже формы */
         }
+
         input {
-            display: block;
-            margin-bottom: 10px;
-            padding: 8px;
-            width: 100%;
-            border-radius: 5px; /* Скруглённые углы */
-            border: 1px solid #ccc; /* Граница */
-            box-sizing: border-box; /* Учитывает внутренние отступы */
+            display: block; /* Делает поля ввода блочными элементами для обеспечения полной ширины */
+            margin-bottom: 10px; /* Отступ снизу для разделения полей ввода */
+            padding: 8px; /* Внутренние отступы для полей ввода */
+            width: 100%; /* Полная ширина поля ввода */
+            border-radius: 5px; /* Скругляет углы поля ввода */
+            border: 1px solid #ccc; /* Серая граница для полей ввода */
+            box-sizing: border-box; /* Учитывает внутренние отступы и границы в общей ширине */
         }
+
         .error {
-            border: 2px solid red;
+            border: 2px solid red; /* Красная граница для поля с ошибкой */
         }
+
         .hidden {
-            display: none;
+            display: none; /* Скрывает элемент без отображения */
         }
+
         .home-link {
-            position: absolute; /* Абсолютное позиционирование */
+            position: absolute; /* Устанавливает абсолютное позиционирование для ссылки */
             top: 20px; /* Отступ сверху */
             right: 20px; /* Отступ справа */
-            text-decoration: none;
-            color: #007bff; /* Цвет ссылки */
-            font-size: 16px; /* Размер текста ссылки */
+            text-decoration: none; /* Убирает подчеркивание для ссылки */
+            color: #007bff; /* Цвет текста ссылки (синий) */
+            font-size: 16px; /* Размер шрифта для ссылки */
         }
+
         .registration-button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
+            padding: 10px 15px; /* Внутренние отступы для кнопки регистрации */
+            background-color: #007bff; /* Цвет кнопки (синий) */
+            color: white; /* Цвет текста кнопки (белый) */
+            border: none; /* Убирает границу кнопки */
+            border-radius: 5px; /* Скругляет углы кнопки */
+            cursor: pointer; /* Указывает, что кнопка кликабельная */
+            font-size: 16px; /* Размер шрифта кнопки */
         }
+
         .registration-button:hover {
-            background-color: #0056b3;
+            background-color: #0056b3; /* Темный цвет кнопки при наведении для улучшения интерактивности */
         }
     </style>
 </head>
@@ -123,151 +277,5 @@
     <p id="registrationResult" class="hidden"></p>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#registrationForm').submit(function(event) {
-            event.preventDefault();
-
-            $('.error').removeClass('error');
-            $('#registrationResult').addClass('hidden').text('');
-
-            const userName = $('#userName').val().trim();
-            const lastName = $('#lastName').val().trim();
-            const firstName = $('#firstName').val().trim();
-            const middleName = $('#middleName').val().trim();
-            const email = $('#email').val().trim();
-            const phoneNumber = $('#phoneNumber').val().trim();
-            const dateOfBirth = $('#dateOfBirth').val();
-            const password = $('#password').val().trim();
-
-            const cardNumber = $('#cardNumber').val().trim();
-            const cardholderName = $('#cardholderName').val().trim();
-            const expirationDate = $('#expirationDate').val().trim();
-            const cvv = $('#cvv').val().trim();
-
-            let hasError = false;
-            let errorMessage = "";
-
-            if (userName === '') {
-                $('#userName').addClass('error');
-                errorMessage += "Имя пользователя не может быть пустым.\n";
-                hasError = true;
-            }
-
-            if (lastName === '') {
-                $('#lastName').addClass('error');
-                errorMessage += "Фамилия не может быть пустой.\n";
-                hasError = true;
-            }
-
-            if (firstName === '') {
-                $('#firstName').addClass('error');
-                errorMessage += "Имя не может быть пустым.\n";
-                hasError = true;
-            }
-
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-                $('#email').addClass('error');
-                errorMessage += "Некорректный email.\n";
-                hasError = true;
-            }
-
-            const phonePattern = /^\+?[0-9. ()-]{7,25}$/;
-            if (!phonePattern.test(phoneNumber)) {
-                $('#phoneNumber').addClass('error');
-                errorMessage += "Некорректный номер телефона.\n";
-                hasError = true;
-            }
-
-            const today = new Date();
-            const birthDate = new Date(dateOfBirth);
-            let age = today.getFullYear() - birthDate.getFullYear();
-            if (birthDate > today.setFullYear(today.getFullYear() - age)) {
-                age--; // Если день рождения еще не пришел в этом году
-            }
-            if (age < 18) {
-                $('#dateOfBirth').addClass('error');
-                errorMessage += "Вы должны быть совершеннолетними (18 лет).\n";
-                hasError = true;
-            }
-
-            if (password.length < 5) {
-                $('#password').addClass('error');
-                errorMessage += "Пароль должен содержать не менее 5 символов.\n";
-                hasError = true;
-            }
-
-            const cardNumberPattern = /^\d{16,19}$/;
-            if (!cardNumberPattern.test(cardNumber)) {
-                $('#cardNumber').addClass('error');
-                errorMessage += "Некорректный номер карты. Должен содержать от 16 до 19 цифр.\n";
-                hasError = true;
-            }
-
-            if (cardholderName === '') {
-                $('#cardholderName').addClass('error');
-                errorMessage += "Имя на карте не может быть пустым.\n";
-                hasError = true;
-            }
-
-            const expirationDatePattern = /^(0[1-9]|1[0-2])\/[0-9]{2}$/;
-            if (!expirationDatePattern.test(expirationDate)) {
-                $('#expirationDate').addClass('error');
-                errorMessage += "Некорректный срок действия карты. Формат: MM/YY.\n";
-                hasError = true;
-            }
-
-            const cvvPattern = /^\d{3}$/;
-            if (!cvvPattern.test(cvv)) {
-                $('#cvv').addClass('error');
-                errorMessage += "Некорректный CVV. Должен содержать 3 цифры.\n";
-                hasError = true;
-            }
-
-            if (hasError) {
-                $('#registrationResult').text("Пожалуйста, исправьте следующие ошибки:\n" + errorMessage).removeClass('hidden');
-                return;
-            }
-
-            $.ajax({
-                type: 'POST',
-                url: '/users',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    userName: userName,
-                    lastName: lastName,
-                    firstName: firstName,
-                    middleName: middleName,
-                    email: email,
-                    phoneNumber: phoneNumber,
-                    dateOfBirth: dateOfBirth,
-                    password: password,
-                    bankAccount: {
-                        cardNumber: cardNumber,
-                        cardholderName: cardholderName,
-                        expirationDate: expirationDate,
-                        cvv: cvv
-                    }
-                }),
-                success: function(response) {
-                    if (response.redirect) {
-                        window.location.href = response.redirect;
-                    }
-                },
-                error: function(xhr) {
-                    if (xhr.status === 400) {
-                        $('#registrationResult').text("Ошибка валидации. Пожалуйста, проверьте ваши данные.").removeClass('hidden');
-                    } else if (xhr.status === 409) {
-                        $('#registrationResult').text("Пользователь уже существует. Пожалуйста, выберите другое имя пользователя.").removeClass('hidden');
-                    } else {
-                        $('#registrationResult').text("Произошла ошибка. Пожалуйста, попробуйте снова позже.").removeClass('hidden');
-                    }
-                }
-            });
-        });
-    });
-</script>
 </body>
 </html>

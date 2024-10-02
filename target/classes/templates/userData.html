@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Управление данными</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/resources/css/style.css}"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script th:inline="javascript">
         function getUser() {
@@ -117,166 +116,136 @@
             getUser();
         });
     </script>
+
     <style>
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: rgba(248, 249, 250, 0.8);
-            border-bottom: 1px solid #dee2e6;
-            color: #0056b3;
+            display: flex; /* Использование flexbox для упрощения выравнивания элементов внутри заголовка */
+            justify-content: space-between; /* Распределяет пространство между элементами, чтобы они были по краям */
+            align-items: center; /* Центрует элементы по вертикали */
+            padding: 10px 20px; /* Внутренние отступы: 10px сверху и снизу, 20px слева и справа */
+            background-color: rgba(248, 249, 250, 0.8); /* Полупрозрачный фоновый цвет (80% непрозрачности) */
+            border-bottom: 1px solid #dee2e6; /* Нижняя граница, разделяющая заголовок и остальную часть страницы */
+            color: #0056b3; /* Цвет текста */
         }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0, 0, 0);
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
+
         .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+            color: #aaa; /* Цвет кнопки закрытия (светло-серый) */
+            float: right; /* Перемещает кнопку закрытия вправо */
+            font-size: 28px; /* Размер шрифта для кнопки закрытия */
+            font-weight: bold; /* Жирный шрифт */
         }
+
         .close:hover,
         .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
+            color: black; /* Цвет текста кнопки закрытия при наведении и фокусе */
+            text-decoration: none; /* Убирает подчеркивание текста */
+            cursor: pointer; /* Указывает, что элемент кликабельный */
         }
+
         .navigate-button {
-            margin-top: 10px;
-            padding: 10px 15px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
+            margin-top: 10px; /* Отступ сверху для кнопок навигации */
+            padding: 10px 15px; /* Внутренние отступы: 10px сверху и снизу, 15px слева и справа */
+            background-color: #007BFF; /* Фоновый цвет кнопки (синий) */
+            color: white; /* Цвет текста кнопки (белый) */
+            border: none; /* Убирает границу кнопки */
+            border-radius: 5px; /* Скругляет углы кнопки */
+            cursor: pointer; /* Указывает, что элемент кликабельный */
+            font-size: 16px; /* Размер шрифта для кнопок */
         }
+
         .navigate-button:hover {
-            background-color: #0056b3;
+            background-color: #0056b3; /* Меняет цвет кнопки при наведении на более темный оттенок синего */
         }
+
         .footer {
-            text-align: center;
-            padding: 10px 0;
-            background-color: rgba(248, 249, 250, 0.8);
-            border-top: 1px solid #dee2e6;
-            width: 100%;
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            z-index: 1000;
+            text-align: center; /* Центрирует текст в нижнем колонтитуле */
+            padding: 10px 0; /* Вертикальные отступы (по 10px сверху и снизу) */
+            background-color: rgba(248, 249, 250, 0.8); /* Полупрозрачный фоновый цвет */
+            border-top: 1px solid #dee2e6; /* Верхняя граница для отделения от остального контента */
+            width: 100%; /* Занимает 100% ширины родительского контейнера */
+            position: fixed; /* Фиксирует футер внизу страницы */
+            left: 0; /* Прижимает к левому краю */
+            bottom: 0; /* Прижимает к нижнему краю */
+            z-index: 1000; /* Устанавливает уровень наложения, чтобы футер был поверх других элементов */
         }
+
         .container {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
+            display: flex; /* Использование flexbox для управления внутренними элементами контейнера */
+            justify-content: space-between; /* Распределяет пространство между дочерними элементами */
+            padding: 20px; /* Внутренние отступы контейнера (20px со всех сторон) */
         }
+
         .box {
-            flex: 1; /* Занимает равное пространство */
-            margin: 10px; /* Отступ между плашками */
-            padding: 20px; /* Внутренние отступы */
-            background-color: #f8f9fa; /* Цвет фона плашки */
-            border: 1px solid #ddd; /* Граница плашки */
-            border-radius: 5px; /* Скругление углов */
-            min-height: 200px; /* Минимальная высота для равного уровня */
+            flex: 1; /* Занимает равное пространство среди других боксов в контейнере */
+            margin: 10px; /* Отступы между отдельными боксами */
+            padding: 20px; /* Внутренние отступы у бокса */
+            background-color: #f8f9fa; /* Цвет фона бокса (светло-серый) */
+            border: 1px solid #ddd; /* Граница бокса */
+            border-radius: 5px; /* Скругляет углы бокса */
+            min-height: 200px; /* Устанавливает минимальную высоту для обеспечения равномерного уровня */
         }
 
         .data-item {
-            margin-bottom: 10px; /* Отступ между полями данных */
-            font-size: 16px;
+            margin-bottom: 10px; /* Отступ между элементами данных внутри бокса */
+            font-size: 16px; /* Размер шрифта для элементов данных */
         }
 
         .button-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 10px; /* Отступ сверху до кнопок */
-            padding-right: 15px; /* Добавление отступа справа */
+            display: flex; /* Flexbox для управления кнопками в контейнере */
+            margin-top: 10px; /* Отступ сверху для кнопок */
+            padding-right: 15px; /* Отступ справа для кнопок */
+            justify-content: center; /* Центрирует кнопки по горизонтали в контейнере */
         }
 
         .button-container .navigate-button {
-            margin: 0 10px; /* Отступы между кнопками */
+            margin: 0 10px; /* Внешние отступы для кнопок */
         }
 
         .update-button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            box-sizing: border-box; /* Учитывает отступы и границы в ширину */
-            padding: 10px 15px;
-            font-size: 16px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 10% auto; /* центрирование модального окна */
-            padding: 10px;
-            border: 1px solid #888;
-            border-radius: 8px; /* Скругленные углы */
-            width: 80%; /* Значение можно подстроить */
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Тень */
-        }
-
-        .form-input {
-            width: 100%; /* Полная ширина */
-            padding: 10px; /* Отступы */
-            margin: 10px 0; /* Вертикальные отступы */
-            border: 1px solid #ccc; /* Граница */
-            border-radius: 5px; /* Скругленные углы */
-            box-sizing: border-box; /* Учитывает отступы и границы в ширину */
+            background-color: #28a745; /* Цвет кнопки обновления (зеленый) */
+            color: white; /* Цвет текста кнопки */
+            border: none; /* Убирает границу */
+            border-radius: 5px; /* Скругляет углы у кнопки обновления */
+            cursor: pointer; /* Указывает, что элемент кликаемый */
+            box-sizing: border-box; /* Учитывает границы и отступы при расчете ширины */
+            padding: 10px 15px; /* Внутренние отступы кнопки обновления */
+            font-size: 16px; /* Размер шрифта кнопки */
         }
 
         .update-button:hover {
-            background-color: #218838; /* Цвет кнопки при наведении */
+            background-color: #218838; /* Меняет цвет кнопки на темно-зеленый при наведении */
         }
 
-        .button-container {
-            display: flex;
-            justify-content: center; /* Центрует кнопку по горизонтали */
-            margin-top: 10px; /* Отступ сверху до кнопки */
+        .modal {
+            display: none; /* Скрывает модальное окно по умолчанию */
+            position: fixed; /* Фиксирует модальное окно на экране */
+            z-index: 1000; /* Устанавливает уровень наложения модального окна */
+            left: 0; /* Прижимает к левому краю */
+            top: 0; /* Прижимает к верхнему краю */
+            width: 100%; /* Ширина модального окна 100% от экрана */
+            height: 100%; /* Высота модального окна 100% от экрана */
+            overflow: auto; /* Позволяет прокрутку содержимого в случае переполнения */
+            background-color: rgb(0, 0, 0); /* Фон модального окна черный */
+            background-color: rgba(0, 0, 0, 0.4); /* Полупрозрачный фон для затемнения подложки */
+        }
+
+        .modal-content {
+            background-color: white; /* Цвет фона содержимого модального окна */
+            margin: 10% auto; /* Центрирование модального окна с отступом 10% сверху */
+            padding: 10px; /* Внутренние отступы содержимого модального окна */
+            border: 1px solid #888; /* Граница содержимого модального окна */
+            border-radius: 8px; /* Скругленные углы содержимого */
+            width: 80%; /* Ширина содержимого модального окна (80% от родительского элемента) */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Тень для содержания, создающая эффект подъема */
+        }
+
+        .form-input {
+            width: 100%; /* Полная ширина для поля ввода */
+            padding: 10px; /* Внутренние отступы у поля ввода */
+            margin: 10px 0; /* Вертикальные отступы: 10px сверху и снизу */
+            border: 1px solid #ccc; /* Граница поля ввода */
+            border-radius: 5px; /* Скругляет углы поля ввода */
+            box-sizing: border-box; /* Учитывается ширина и отступы при расчете размера поля */
         }
     </style>
 </head>

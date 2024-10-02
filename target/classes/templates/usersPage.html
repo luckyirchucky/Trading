@@ -2,111 +2,233 @@
 <html xmlns:sec="http://www.springframework.org/security/tags" lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Рынок криптовалюты</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let currentCrypto = null;
+        let pricePerCoin = null;
+
+        function fetchCryptoData() {
+            $.ajax({
+                url: '/tickers',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#cryptoDataContainer').empty();
+
+                    if (data && data.cryptoData && data.cryptoData.length > 0) {
+                        let table = '<table><thead><tr>' +
+                            '<th>№</th>' +
+                            '<th>Криптовалюта</th>' +
+                            '<th>Символ</th>' +
+                            '<th>Цена (USD)</th>' +
+                            '<th>Цена (BTC)</th>' +
+                            '<th>Объем торгов за 24 часа (USD)</th>' +
+                            '<th>Изменение за 24 часа (%)</th>' +
+                            '<th>Изменение за 7 дней (%)</th>' +
+                            '<th>Рыночная капитализация (USD)</th>' +
+                            '<th>Действие</th>' +
+                            '</tr></thead><tbody>';
+
+                        data.cryptoData.forEach(function(crypto) {
+                            table += '<tr>' +
+                                '<td>' + crypto.rank + '</td>' +
+                                '<td>' + crypto.name + '</td>' +
+                                '<td>' + crypto.symbol + '</td>' +
+                                '<td>' + crypto.price_usd + '</td>' +
+                                '<td>' + crypto.price_btc + '</td>' +
+                                '<td>' + crypto.volume24 + '</td>' +
+                                '<td>' + crypto.percent_change_24h + '</td>' +
+                                '<td>' + crypto.percent_change_7d + '</td>' +
+                                '<td>' + crypto.market_cap_usd + '</td>' +
+                                '<td><button class="buy-button" data-crypto="' + crypto.name + '" data-cost="' + crypto.price_usd + '">Купить</button></td>' +
+                                '</tr>';
+                        });
+                        table += '</tbody></table>';
+                        $('#cryptoDataContainer').append(table);
+                    } else {
+                        $('#cryptoDataContainer').append('<h3>Нет данных о криптовалютах.</h3>');
+                    }
+
+                    $('.buy-button').click(function() {
+                        currentCrypto = $(this).data('crypto');
+                        pricePerCoin = $(this).data('cost');
+                        $('#purchaseModal').show();
+                    });
+                },
+                error: function(xhr, status, error) {
+                    $('#cryptoDataContainer').html('<h3>Ошибка получения данных</h3>');
+                    console.error('Ошибка:', error);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            fetchCryptoData();
+
+            $('#userDataButton').click(function() {
+                window.location.href = '/userData';
+            });
+
+            $('#walletButton').click(function() {
+                window.location.href = '/wallet';
+            });
+
+            $('#closeModal').click(function() {
+                $('#purchaseModal').hide();
+                $('#coinAmount').val(1);
+                $('#purchaseMessage').empty();
+            });
+
+            $('#confirmPurchase').click(function() {
+                const amount = parseInt($('#coinAmount').val());
+                if (amount > 3) {
+                    $('#purchaseMessage').text('Максимальное количество монет для единовременной покупки - 3.');
+                } else {
+                    const command = {
+                        coin: currentCrypto,
+                        count: amount,
+                        costPerOneCoin: pricePerCoin,
+                        totalCost: amount * pricePerCoin
+                    };
+                    $.ajax({
+                        url: '/coinwallet',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(command),
+                        success: function() {
+                            $('#purchaseModal').hide();
+                            $('#coinAmount').val(1);
+                        },
+                        error: function(xhr, status, error) {
+                            $('#purchaseMessage').text('Ошибка при покупке: ' + error);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #f2f2f2;
+            font-family: Arial, sans-serif; /* Устанавливает шрифт для всего текста на странице */
+            margin: 0; /* Убирает стандартные отступы браузера */
+            background-color: #f2f2f2; /* Устанавливает светло-серый цвет фона для страницы */
         }
+
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: rgba(248, 249, 250, 0.8);
-            border-bottom: 1px solid #dee2e6;
-            color: #0056b3;
+            display: flex; /* Использует flexbox для выстраивания элементов в строку */
+            justify-content: space-between; /* Распределяет доступное пространство между элементами */
+            align-items: center; /* Центрует элементы вертикально внутри заголовка */
+            padding: 10px 20px; /* Внутренние отступы: 10px сверху и снизу, 20px слева и справа */
+            background-color: rgba(248, 249, 250, 0.8); /* Полупрозрачный фоновый цвет заголовка */
+            border-bottom: 1px solid #dee2e6; /* Нижняя граница для визуального разделения */
+            color: #0056b3; /* Цвет текста в заголовке */
         }
+
         .header h4 {
-            margin: 0;
+            margin: 0; /* Убирает отступы для заголовка h4 внутри заголовка */
         }
+
         .header button {
-            margin-left: 10px;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
+            margin-left: 10px; /* Отступ слева для кнопок в заголовке */
+            color: white; /* Цвет текста для всех кнопок (белый) */
+            border: none; /* Убирает границу кнопки */
+            padding: 10px 15px; /* Внутренние отступы для кнопок */
+            border-radius: 5px; /* Скругляет углы кнопки */
+            cursor: pointer; /* Указывает, что кнопка кликабельная */
+            font-size: 16px; /* Размер шрифта для текста в кнопках */
         }
+
         .header button#logoutButton {
             background-color: #dc3545; /* Красный цвет для кнопки "Выйти" */
         }
+
         .header button#logoutButton:hover {
-            background-color: #c82333; /* Темнее при наведении */
+            background-color: #c82333; /* Темно-красный цвет кнопки при наведении */
         }
+
         .header button:not(#logoutButton) {
-            background-color: #007bff; /* Синий цвет для других кнопок */
+            background-color: #007bff; /* Синий цвет для всех кнопок, кроме "Выйти" */
         }
+
         .header button:not(#logoutButton):hover {
-            background-color: #0056b3; /* Темнее при наведении */
+            background-color: #0056b3; /* Темнее синего цвета для остальных кнопок при наведении */
         }
+
         table {
-            width: 100%;
-            border-collapse: collapse;
+            width: 100%; /* Устанавливает ширину таблицы на 100% от родителя */
+            border-collapse: collapse; /* Убирает промежутки между ячейками таблицы и объединяет их */
             margin-top: 20px; /* Отступ сверху для таблицы */
         }
+
         th, td {
-            border: 1px solid #ddd;
-            padding: 10px; /* Увеличенный отступ внутри ячеек */
-            text-align: left;
+            border: 1px solid #ddd; /* Границы ячеек таблицы светло-серые */
+            padding: 10px; /* Увеличенные внутренние отступы для ячеек */
+            text-align: left; /* Выравнивание текста в ячейках по левому краю */
         }
+
         th {
-            background-color: #f2f2f2;
+            background-color: #f2f2f2; /* Светло-серый фон для заголовков таблицы */
         }
+
         .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0, 0, 0);
-            background-color: rgba(0, 0, 0, 0.4);
+            display: none; /* Скрывает модальное окно по умолчанию */
+            position: fixed; /* Фиксирует модальное окно на экране */
+            z-index: 1000; /* Устанавливает уровень наложения для модального окна */
+            left: 0; /* Прижимает к левому краю */
+            top: 0; /* Прижимает к верхнему краю */
+            width: 100%; /* Ширина модального окна 100% от экрана */
+            height: 100%; /* Высота модального окна 100% от экрана */
+            overflow: auto; /* Позволяет прокрутку содержимого в случае переполнения */
+            background-color: rgb(0, 0, 0); /* Черный фон для затемнения подложки */
+            background-color: rgba(0, 0, 0, 0.4); /* Полупрозрачный фон для затемнения (40% непрозрачности) */
         }
+
         .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
+            background-color: #fefefe; /* Светлый фон для содержимого модального окна */
+            margin: 15% auto; /* Центрирует модальное окно с отступом 15% сверху */
+            padding: 20px; /* Внутренние отступы для содержимого модального окна */
+            border: 1px solid #888; /* Граница содержимого модального окна */
+            width: 80%; /* Ширина содержимого модального окна (80% от родительского элемента) */
         }
+
         .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+            color: #aaa; /* Цвет текста для кнопки закрытия (светло-серый) */
+            float: right; /* Перемещает кнопку закрытия к правому краю */
+            font-size: 28px; /* Размер шрифта кнопки закрытия */
+            font-weight: bold; /* Жирный шрифт для кнопки закрытия */
         }
+
         .close:hover,
         .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
+            color: black; /* Цвет текста кнопки закрытия при наведении и фокусе */
+            text-decoration: none; /* Убирает подчеркивание текста */
+            cursor: pointer; /* Указывает, что элемент кликабельный */
         }
+
         .buy-button {
             background-color: #28a745; /* Зеленый цвет для кнопок "Купить" */
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
+            color: white; /* Цвет текста кнопки (белый) */
+            border: none; /* Убирает границу кнопки */
+            padding: 8px 12px; /* Внутренние отступы для кнопки "Купить" */
+            border-radius: 4px; /* Скругляет углы кнопки "Купить" */
+            cursor: pointer; /* Указывает, что кнопка кликабельная */
+            font-size: 16px; /* Размер шрифта для кнопки "Купить" */
         }
+
         .buy-button:hover {
-            background-color: #218838; /* Темнее при наведении */
+            background-color: #218838; /* Темнее цвета кнопки "Купить" при наведении */
         }
+
         .footer {
-            text-align: center;
-            padding: 10px 0;
-            background-color: rgba(248, 249, 250, 0.8);
-            border-top: 1px solid #dee2e6;
-            width: 100%;
-            left: 0;
-            bottom: 0;
+            text-align: center; /* Центрирует текст в нижнем колонтитуле */
+            padding: 10px 0; /* Вертикальные отступы (по 10px сверху и снизу) */
+            background-color: rgba(248, 249, 250, 0.8); /* Полупрозрачный фон для нижнего колонтитула */
+            border-top: 1px solid #dee2e6; /* Верхняя граница для отделения от остального контента */
+            width: 100%; /* Занимает 100% ширины родительского элемента */
+            left: 0; /* Прижимает к левому краю */
+            bottom: 0; /* Прижимает к нижнему краю */
         }
     </style>
 </head>
@@ -135,112 +257,6 @@
                 <div id="purchaseMessage"></div>
             </div>
         </div>
-
-        <script>
-            let currentCrypto = null;
-            let pricePerCoin = null;
-
-            function fetchCryptoData() {
-                $.ajax({
-                    url: '/tickers',
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#cryptoDataContainer').empty();
-
-                        if (data && data.cryptoData && data.cryptoData.length > 0) {
-                            let table = '<table><thead><tr>' +
-                                '<th>№</th>' +
-                                '<th>Криптовалюта</th>' +
-                                '<th>Символ</th>' +
-                                '<th>Цена (USD)</th>' +
-                                '<th>Цена (BTC)</th>' +
-                                '<th>Объем торгов за 24 часа (USD)</th>' +
-                                '<th>Изменение за 24 часа (%)</th>' +
-                                '<th>Изменение за 7 дней (%)</th>' +
-                                '<th>Рыночная капитализация (USD)</th>' +
-                                '<th>Действие</th>' +
-                                '</tr></thead><tbody>';
-
-                            data.cryptoData.forEach(function(crypto) {
-                                table += '<tr>' +
-                                    '<td>' + crypto.rank + '</td>' +
-                                    '<td>' + crypto.name + '</td>' +
-                                    '<td>' + crypto.symbol + '</td>' +
-                                    '<td>' + crypto.price_usd + '</td>' +
-                                    '<td>' + crypto.price_btc + '</td>' +
-                                    '<td>' + crypto.volume24 + '</td>' +
-                                    '<td>' + crypto.percent_change_24h + '</td>' +
-                                    '<td>' + crypto.percent_change_7d + '</td>' +
-                                    '<td>' + crypto.market_cap_usd + '</td>' +
-                                    '<td><button class="buy-button" data-crypto="' + crypto.name + '" data-cost="' + crypto.price_usd + '">Купить</button></td>' +
-                                    '</tr>';
-                            });
-
-                            table += '</tbody></table>';
-                            $('#cryptoDataContainer').append(table);
-                        } else {
-                            $('#cryptoDataContainer').append('<h3>Нет данных о криптовалютах.</h3>');
-                        }
-
-                        $('.buy-button').click(function() {
-                            currentCrypto = $(this).data('crypto');
-                            pricePerCoin = $(this).data('cost');
-                            $('#purchaseModal').show();
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        $('#cryptoDataContainer').html('<h3>Ошибка получения данных</h3>');
-                        console.error('Ошибка:', error);
-                    }
-                });
-            }
-
-            $(document).ready(function() {
-                fetchCryptoData();
-
-                $('#userDataButton').click(function() {
-                    window.location.href = '/userData';
-                });
-
-                $('#walletButton').click(function() {
-                    window.location.href = '/wallet';
-                });
-
-                $('#closeModal').click(function() {
-                    $('#purchaseModal').hide();
-                    $('#coinAmount').val(1);
-                    $('#purchaseMessage').empty();
-                });
-
-                $('#confirmPurchase').click(function() {
-                    const amount = parseInt($('#coinAmount').val());
-                    if (amount > 3) {
-                        $('#purchaseMessage').text('Максимальное количество монет для единовременной покупки - 3.');
-                    } else {
-                        const command = {
-                            coin: currentCrypto,
-                            count: amount,
-                            costPerOneCoin: pricePerCoin,
-                            totalCost: amount * pricePerCoin
-                        };
-                        $.ajax({
-                            url: '/coinwallet',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(command),
-                            success: function() {
-                                $('#purchaseModal').hide();
-                                $('#coinAmount').val(1);
-                            },
-                            error: function(xhr, status, error) {
-                                $('#purchaseMessage').text('Ошибка при покупке: ' + error);
-                            }
-                        });
-                    }
-                });
-            });
-        </script>
     </div>
 </div>
 

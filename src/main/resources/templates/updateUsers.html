@@ -3,8 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Управление данными пользователей</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/resources/css/style.css}"/>
+    <title>Управление пользователями</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script th:inline="javascript">
         function getUsers() {
@@ -122,137 +121,155 @@
 
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #f2f2f2;
+            font-family: Arial, sans-serif; /* Устанавливает шрифт для всего документа */
+            margin: 0; /* Убирает стандартные отступы браузера */
+            background-color: #f2f2f2; /* Светлый цвет фона для страницы */
         }
 
         .header {
-            background-color: #007bff;
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
+            display: flex; /* Использование flexbox для упрощения выравнивания элементов внутри заголовка */
+            justify-content: space-between; /* Распределяет пространство между элементами, чтобы они были по краям */
+            align-items: center; /* Центрует элементы по вертикали */
+            padding: 10px 20px; /* Внутренние отступы: 10px сверху и снизу, 20px слева и справа */
+            background-color: rgba(248, 249, 250, 0.8); /* Полупрозрачный фоновый цвет (80% непрозрачности) */
+            border-bottom: 1px solid #dee2e6; /* Нижняя граница, разделяющая заголовок и остальную часть страницы */
+            color: #0056b3; /* Цвет текста */
         }
 
-        .header h4 {
-            margin: 0;
+        .header button {
+            margin-left: 10px; /* Отступ слева для кнопок в заголовке */
+            color: white; /* Цвет текста для всех кнопок (белый) */
+            border: none; /* Убирает границу кнопки */
+            padding: 10px 15px; /* Внутренние отступы для кнопок */
+            border-radius: 5px; /* Скругляет углы кнопки */
+            cursor: pointer; /* Указывает, что кнопка кликабельная */
+            font-size: 16px; /* Размер шрифта для текста в кнопках */
+            background-color: #dc3545; /* Красный цвет для кнопки "Выйти" */
         }
 
-        #userLogout {
-            color: white;
-            text-decoration: none;
-            margin-left: auto;
+        .header button#logoutButton:hover {
+            background-color: #c82333; /* Темно-красный цвет кнопки при наведении */
         }
 
         #users-table {
-            margin: 20px auto;
-            border-collapse: collapse;
-            text-align: left;
-            width: 80%;
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto; /* Центрирует таблицу с отступом сверху и снизу */
+            border-collapse: collapse; /* Убирает двойные границы в таблице */
+            text-align: left; /* Выравнивание текста в таблице по левому краю */
+            width: 80%; /* Ширина таблицы составляет 80% родительского элемента */
+            background-color: white; /* Белый фон для таблицы */
+            border-radius: 8px; /* Скругляет углы таблицы */
+            overflow: hidden; /* Обрезает содержимое, которое выходит за пределы */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Легкая тень для создания эффекта глубины */
         }
 
         #users-table th, #users-table td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
+            padding: 12px; /* Внутренние отступы для ячеек таблицы */
+            border-bottom: 1px solid #ddd; /* Легкая граница снизу ячеек */
         }
 
         #users-table th {
-            background-color: #f2f2f2;
+            background-color: #f2f2f2; /* Цвет фона для заголовков таблицы */
         }
 
         button {
             width: 120px; /* Фиксированная ширина для всех кнопок */
             padding: 10px; /* Общие отступы внутри кнопок */
-            border: none; /* Без границы */
-            border-radius: 5px; /* Скругленные углы */
-            cursor: pointer; /* Указатель при наведении */
+            border: none; /* Убирает границу для кнопок */
+            border-radius: 5px; /* Скругляет углы кнопок */
+            cursor: pointer; /* Указывает, что кнопки кликабельны */
             margin: 2px; /* Отступ между кнопками */
             box-sizing: border-box; /* Включает отступы и границы в ширину */
-            font-size: 16px;
+            font-size: 16px; /* Размер шрифта для текста кнопки */
         }
 
         .delete-button {
-            background-color: red;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            padding: 5px 10px;
+            background-color: red; /* Цвет фона для кнопки удаления (красный) */
+            color: white; /* Цвет текста для кнопки удаления (белый) */
+            border: none; /* Убирает границу для кнопки */
+            border-radius: 5px; /* Скругляет углы кнопки удаления */
+            cursor: pointer; /* Указывает, что кнопка кликабельная */
+            padding: 5px 10px; /* Внутренние отступы для кнопки удаления */
         }
 
         .update-button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            padding: 5px 10px;
-            width: 100%; /* Полная ширина для кнопки */
-            box-sizing: border-box; /* Учитывает отступы и границы в ширину */
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 10% auto; /* центрирование модального окна */
-            padding: 20px;
-            border: 1px solid #888;
-            border-radius: 8px; /* Скругленные углы */
-            width: 80%; /* Значение можно подстроить */
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Тень */
-        }
-
-        .form-input {
-            width: 100%; /* Полная ширина */
-            padding: 10px; /* Отступы */
-            margin: 10px 0; /* Вертикальные отступы */
-            border: 1px solid #ccc; /* Граница */
-            border-radius: 5px; /* Скругленные углы */
+            background-color: #007bff; /* Цвет фона для кнопки обновления (синий) */
+            color: white; /* Цвет текста для кнопки обновления (белый) */
+            border: none; /* Убирает границу для кнопки */
+            border-radius: 5px; /* Скругляет углы кнопки обновления */
+            cursor: pointer; /* Указывает, что кнопка кликабельная */
+            padding: 5px 10px; /* Внутренние отступы для кнопки обновления */
+            width: 100%; /* Полная ширина для кнопки обновления */
             box-sizing: border-box; /* Учитывает отступы и границы в ширину */
         }
 
         .update-button:hover {
-            background-color: #0056b3; /* Цвет кнопки при наведении */
+            background-color: #0056b3; /* Темный цвет кнопки обновления при наведении */
+        }
+
+        .modal {
+            display: none; /* По умолчанию скрывает модальное окно */
+            position: fixed; /* Фиксированное позиционирование для модального окна */
+            z-index: 1000; /* Обеспечивает, что модальное окно отображается сверху других элементов */
+            left: 0; /* Обеспечивает, что модальное окно начинается от левого края */
+            top: 0; /* Обеспечивает, что модальное окно начинается от верхнего края */
+            width: 100%; /* Задает ширину модального окна равной ширине экрана */
+            height: 100%; /* Задает высоту модального окна равной высоте экрана */
+            overflow: auto; /* Разрешает прокрутку контента в модальном окне */
+            background-color: rgba(0, 0, 0, 0.4); /* Полупрозрачный черный фон для затенения страницы */
+        }
+
+        .modal-content {
+            background-color: white; /* Белый фон для контента модального окна */
+            margin: 10% auto; /* Центрирует модальное окно с отступами сверху и снизу */
+            padding: 20px; /* Внутренние отступы для контента модального окна */
+            border: 1px solid #888; /* Светлая граница для модального окна */
+            border-radius: 8px; /* Скругляет углы модального окна */
+            width: 80%; /* Ширина содержимого модального окна */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Тень для создания эффекта глубины */
+        }
+
+        .close {
+            color: #aaa; /* Цвет для иконки закрытия модального окна */
+            float: right; /* Сдвигает кнопку закрытия вправо */
+            font-size: 28px; /* Размер шрифта для кнопки закрытия */
+            font-weight: bold; /* Делает текст кнопки закрытия жирным */
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black; /* Изменяет цвет текста при наведении или фокусе */
+            text-decoration: none; /* Убирает подчеркивание при наведении */
+            cursor: pointer; /* Указывает, что элемент кликабельный */
+        }
+
+        .form-input {
+            width: 100%; /* Полная ширина для полей ввода */
+            padding: 10px; /* Внутренние отступы для полей ввода */
+            margin: 10px 0; /* Вертикальные отступы между полями ввода */
+            border: 1px solid #ccc; /* Свечение поля ввода */
+            border-radius: 5px; /* Скругленные углы для полей ввода */
+            box-sizing: border-box; /* Учитывает отступы и границы в ширину */
+        }
+
+        .footer {
+            text-align: center; /* Центрирует текст в нижнем колонтитуле */
+            padding: 10px 0; /* Вертикальные отступы (по 10px сверху и снизу) */
+            background-color: rgba(248, 249, 250, 0.8); /* Полупрозрачный фоновый цвет */
+            border-top: 1px solid #dee2e6; /* Верхняя граница для отделения от остального контента */
+            width: 100%; /* Занимает 100% ширины родительского контейнера */
+            position: fixed; /* Фиксирует футер внизу страницы */
+            left: 0; /* Прижимает к левому краю */
+            bottom: 0; /* Прижимает к нижнему краю */
+            z-index: 1000; /* Устанавливает уровень наложения, чтобы футер был поверх других элементов */
         }
     </style>
 </head>
+
 <body>
 <div class="header">
-    <h4>Управление данными пользователей</h4>
+    <h2>Crypto coins</h2>
     <sec:authorize access="isAuthenticated()">
-        <a id="userLogout" href="/logout">Выйти</a>
+        <button id="logoutButton" onclick="window.location.href='/logout'">Выйти</button>
     </sec:authorize>
 </div>
 
@@ -290,5 +307,10 @@
         </div>
     </div>
 </div>
+
+<div class="footer">
+    <p>© 2024 Crypto coins platform. Все права защищены.</p>
+</div>
+
 </body>
 </html>
