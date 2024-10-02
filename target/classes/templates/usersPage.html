@@ -5,13 +5,52 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Рынок криптовалюты</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f2f2f2;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgba(248, 249, 250, 0.8);
+            border-bottom: 1px solid #dee2e6;
+            color: #0056b3;
+        }
+        .header h4 {
+            margin: 0;
+        }
+        .header button {
+            margin-left: 10px;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .header button#logoutButton {
+            background-color: #dc3545; /* Красный цвет для кнопки "Выйти" */
+        }
+        .header button#logoutButton:hover {
+            background-color: #c82333; /* Темнее при наведении */
+        }
+        .header button:not(#logoutButton) {
+            background-color: #007bff; /* Синий цвет для других кнопок */
+        }
+        .header button:not(#logoutButton):hover {
+            background-color: #0056b3; /* Темнее при наведении */
+        }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px; /* Отступ сверху для таблицы */
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px; /* Увеличенный отступ внутри ячеек */
             text-align: left;
         }
         th {
@@ -26,8 +65,8 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
         }
         .modal-content {
             background-color: #fefefe;
@@ -48,22 +87,43 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .buy-button {
+            background-color: #28a745; /* Зеленый цвет для кнопок "Купить" */
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .buy-button:hover {
+            background-color: #218838; /* Темнее при наведении */
+        }
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: rgba(248, 249, 250, 0.8);
+            border-top: 1px solid #dee2e6;
+            width: 100%;
+            left: 0;
+            bottom: 0;
+        }
     </style>
 </head>
 <body>
-<div>
+
+<div class="header">
+    <h2>Crypto coins</h2>
     <sec:authorize access="isAuthenticated()">
-        <h4><a href="/logout">Выйти</a></h4>
+        <button id="userDataButton">Мой профиль</button>
+        <button id="walletButton">Мой портфель</button>
+        <button id="logoutButton" onclick="window.location.href='/logout'">Выйти</button>
     </sec:authorize>
+</div>
 
-    <button class="user-data-button" id="userDataButton">Мой профиль</button>
-    <button class="wallet-button" id="walletButton">Мой портфель</button>
-
+<div>
     <div>
-        <h2>Данные о криптовалютах:</h2>
-
         <div id="cryptoDataContainer"></div>
-
         <div id="purchaseModal" class="modal">
             <div class="modal-content">
                 <span class="close" id="closeModal">&times;</span>
@@ -95,10 +155,10 @@
                                 '<th>Символ</th>' +
                                 '<th>Цена (USD)</th>' +
                                 '<th>Цена (BTC)</th>' +
-                                '<th>Объем торгов монетой за последние 24 часа (USD)</th>' +
-                                '<th>Изменение цены за последние 24 часа (%)</th>' +
-                                '<th>Изменение цены за последние 7 дней (%)</th>' +
-                                '<th>Рыночная капитализация монет (USD)</th>' +
+                                '<th>Объем торгов за 24 часа (USD)</th>' +
+                                '<th>Изменение за 24 часа (%)</th>' +
+                                '<th>Изменение за 7 дней (%)</th>' +
+                                '<th>Рыночная капитализация (USD)</th>' +
                                 '<th>Действие</th>' +
                                 '</tr></thead><tbody>';
 
@@ -113,10 +173,10 @@
                                     '<td>' + crypto.percent_change_24h + '</td>' +
                                     '<td>' + crypto.percent_change_7d + '</td>' +
                                     '<td>' + crypto.market_cap_usd + '</td>' +
-
                                     '<td><button class="buy-button" data-crypto="' + crypto.name + '" data-cost="' + crypto.price_usd + '">Купить</button></td>' +
                                     '</tr>';
                             });
+
                             table += '</tbody></table>';
                             $('#cryptoDataContainer').append(table);
                         } else {
@@ -138,10 +198,6 @@
 
             $(document).ready(function() {
                 fetchCryptoData();
-
-                $('#refreshButton').click(function() {
-                    fetchCryptoData();
-                });
 
                 $('#userDataButton').click(function() {
                     window.location.href = '/userData';
@@ -187,5 +243,10 @@
         </script>
     </div>
 </div>
+
+<div class="footer">
+    <p>© 2024 Crypto coins platform. Все права защищены.</p>
+</div>
+
 </body>
 </html>

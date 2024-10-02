@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:sec="http://www.springframework.org/security/tags" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Управление моими данными</title>
+    <title>Управление данными</title>
     <link rel="stylesheet" type="text/css" th:href="@{/resources/css/style.css}"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script th:inline="javascript">
@@ -52,12 +52,12 @@
         function saveUserData() {
             const userId = $('#updateUserId').val();
             const updatedUser = {
-                lastName: $('#lastName').val(),
-                firstName: $('#firstName').val(),
-                middleName: $('#middleName').val(),
-                dateOfBirth: $('#dateOfBirth').val(),
-                phoneNumber: $('#phoneNumber').val(),
-                email: $('#email').val()
+                lastName: $('#lastNameInput').val(),
+                firstName: $('#firstNameInput').val(),
+                middleName: $('#middleNameInput').val(),
+                dateOfBirth: $('#dateOfBirthInput').val(),
+                phoneNumber: $('#phoneNumberInput').val(),
+                email: $('#emailInput').val()
             };
             $.ajax({
                 url: '/users/' + userId,
@@ -67,7 +67,7 @@
                 success: function() {
                     alert('Данные успешно обновлены!');
                     getUser();
-                    closeModal();
+                    closeUserModal();
                 },
                 error: function(xhr) {
                     if (xhr.status === 400) {
@@ -79,30 +79,9 @@
                     }
                 }
             });
-            alert('Данные пользователя успешно обновлены!');
-            closeUserModal();
-            displayUserData({
-                lastName: $('#lastNameInput').val(),
-                firstName: $('#firstNameInput').val(),
-                middleName: $('#middleNameInput').val(),
-                dateOfBirth: $('#dateOfBirthInput').val(),
-                phoneNumber: $('#phoneNumberInput').val(),
-                email: $('#emailInput').val(),
-                bankAccount: {
-                    cardNumber: $('#cardNumberInput').val(),
-                    cardholderName: $('#cardholderNameInput').val(),
-                    expirationDate: $('#expirationDateInput').val(),
-                    cvv: $('#cvvInput').val()
-                }
-            });
         }
 
         function openBankAccountModal() {
-            $('#cardNumberInput').text();
-            $('#cardholderNameInput').text();
-            $('#expirationDateInput').text();
-            $('#cvvInput').text();
-
             $('#bankAccountModal').show();
         }
 
@@ -128,53 +107,26 @@
                     alert("Ошибка при обновлении банковского аккаунта. Пожалуйста, попробуйте позже.");
                 }
             });
-
-            alert('Данные банковского аккаунта успешно обновлены!');
-            closeBankAccountModal();
-            $('#cardNumberDisplay').text('•••• •••• •••• ' + $('#cardNumberInput').val().slice(-4));
-        }
-
-        function closeModal() {
-            $('#updateModal').hide();
-            clearUpdateForm();
         }
 
         function closeBankAccountModal() {
             $('#bankAccountModal').hide();
-            clearBankAccountForm();
-        }
-
-        function clearUpdateForm() {
-            $('#lastName').val('');
-            $('#firstName').val('');
-            $('#middleName').val('');
-            $('#dateOfBirth').val('');
-            $('#phoneNumber').val('');
-            $('#email').val('');
-            $('#updateUserId').val('');
-        }
-
-        function clearBankAccountForm() {
-            $('#cardNumber').val('');
-            $('#cardholderName').val('');
-            $('#expirationDate').val('');
-            $('#cvv').val('');
         }
 
         $(document).ready(function() {
             getUser();
-
-            $(window).click(function(event) {
-                if ($(event.target).is('#updateModal')) {
-                    closeModal();
-                } else if ($(event.target).is('#bankAccountModal')) {
-                    closeBankAccountModal();
-                }
-            });
         });
     </script>
-
     <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgba(248, 249, 250, 0.8);
+            border-bottom: 1px solid #dee2e6;
+            color: #0056b3;
+        }
         .modal {
             display: none;
             position: fixed;
@@ -207,7 +159,7 @@
             cursor: pointer;
         }
         .navigate-button {
-            margin: 20px;
+            margin-top: 10px;
             padding: 10px 15px;
             background-color: #007BFF;
             color: white;
@@ -219,60 +171,184 @@
         .navigate-button:hover {
             background-color: #0056b3;
         }
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: rgba(248, 249, 250, 0.8);
+            border-top: 1px solid #dee2e6;
+            width: 100%;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            z-index: 1000;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        .box {
+            flex: 1; /* Занимает равное пространство */
+            margin: 10px; /* Отступ между плашками */
+            padding: 20px; /* Внутренние отступы */
+            background-color: #f8f9fa; /* Цвет фона плашки */
+            border: 1px solid #ddd; /* Граница плашки */
+            border-radius: 5px; /* Скругление углов */
+            min-height: 200px; /* Минимальная высота для равного уровня */
+        }
+
+        .data-item {
+            margin-bottom: 10px; /* Отступ между полями данных */
+            font-size: 16px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px; /* Отступ сверху до кнопок */
+            padding-right: 15px; /* Добавление отступа справа */
+        }
+
+        .button-container .navigate-button {
+            margin: 0 10px; /* Отступы между кнопками */
+        }
+
+        .update-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-sizing: border-box; /* Учитывает отступы и границы в ширину */
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto; /* центрирование модального окна */
+            padding: 10px;
+            border: 1px solid #888;
+            border-radius: 8px; /* Скругленные углы */
+            width: 80%; /* Значение можно подстроить */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Тень */
+        }
+
+        .form-input {
+            width: 100%; /* Полная ширина */
+            padding: 10px; /* Отступы */
+            margin: 10px 0; /* Вертикальные отступы */
+            border: 1px solid #ccc; /* Граница */
+            border-radius: 5px; /* Скругленные углы */
+            box-sizing: border-box; /* Учитывает отступы и границы в ширину */
+        }
+
+        .update-button:hover {
+            background-color: #218838; /* Цвет кнопки при наведении */
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center; /* Центрует кнопку по горизонтали */
+            margin-top: 10px; /* Отступ сверху до кнопки */
+        }
     </style>
 </head>
 <body>
 
-<button class="navigate-button" onclick="window.location.href='/usersPage'">Назад</button>
+<div class="header">
+    <h2>Crypto coins</h2>
+    <sec:authorize access="isAuthenticated()">
+        <button class="navigate-button" onclick="window.location.href='/usersPage'">Рынок криптовалюты</button>
+    </sec:authorize>
+</div>
 
-<div>
-    <h2>Мои данные</h2>
-    <div>
-        <input type="hidden" id="updateUserId">
-        <p>Фамилия: <span id="lastName">Иванов</span></p>
-        <p>Имя: <span id="firstName">Иван</span></p>
-        <p>Отчество: <span id="middleName">Иванович</span></p>
-        <p>Дата рождения: <span id="dateOfBirth">01.01.1990</span></p>
-        <p>Номер телефона: <span id="phoneNumber">+7 123 456-78-90</span></p>
-        <p>Email: <span id="email">ivanov@example.com</span></p>
+<div class="container">
+    <div class="box">
+        <h2>Мои данные</h2>
+        <div>
+            <input type="hidden" id="updateUserId">
+            <div class="data-item"><b>Фамилия: </b><span id="lastName"> </span></div>
+            <div class="data-item"><b>Имя: </b><span id="firstName"> </span></div>
+            <div class="data-item"><b>Отчество: </b><span id="middleName"> </span></div>
+            <div class="data-item"><b>Дата рождения: </b><span id="dateOfBirth"> </span></div>
+            <div class="data-item"><b>Номер телефона: </b><span id="phoneNumber"> </span></div>
+            <div class="data-item"><b>Email: </b><span id="email"> </span></div>
+        </div>
+        <button class="navigate-button" onclick="openUserModal()">Редактировать</button>
     </div>
 
-    <h3>Данные банковского аккаунта</h3>
-    <div id="bankAccountDisplay">
-        <p>Номер карты: <span id="cardNumberDisplay">•••• •••• •••• ••••</span></p>
-        <p>Имя владельца: <span id="cardholderNameDisplay">Иванов Иван</span></p>
-        <p>Срок действия: <span id="expirationDateDisplay">**/**</span></p>
-        <p>Cvv: <span id="cvvDisplay">***</span></p>
+    <div class="box">
+        <h2>Данные банковского счета</h2>
+        <div id="bankAccountDisplay">
+            <div class="data-item"><b>Номер карты: </b><span id="cardNumberDisplay"> </span></div>
+            <div class="data-item"><b>Имя владельца: </b><span id="cardholderNameDisplay"> </span></div>
+            <div class="data-item"><b>Срок действия: </b><span id="expirationDateDisplay"> </span></div>
+            <div class="data-item"><b>Cvv: </b><span id="cvvDisplay"> </span></div>
+        </div>
+        <button class="navigate-button" onclick="openBankAccountModal()">Редактировать</button>
     </div>
-    <button onclick="openBankAccountModal()">Обновить данные банковского счета</button>
-
-    <button class="navigate-button" onclick="openUserModal()">Обновить мои данные</button>
 </div>
 
 <div id="userModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeUserModal()">&times;</span>
-        <h2>Обновить мои данные</h2>
-        <p>Фамилия: <input type="text" id="lastNameInput" placeholder="Фамилия"></p>
-        <p>Имя: <input type="text" id="firstNameInput" placeholder="Имя"></p>
-        <p>Отчество: <input type="text" id="middleNameInput" placeholder="Отчество"></p>
-        <p>Дата рождения: <input type="date" id="dateOfBirthInput"></p>
-        <p>Номер телефона: <input type="text" id="phoneNumberInput" placeholder="Номер телефона"></p>
-        <p>Email: <input type="email" id="emailInput" placeholder="Email"></p>
-        <button onclick="saveUserData()">Сохранить</button>
+        <h2>Редактирование персональных данных</h2>
+        <p>Фамилия: <input class="form-input" type="text" id="lastNameInput" placeholder="Фамилия"></p>
+        <p>Имя: <input class="form-input" type="text" id="firstNameInput" placeholder="Имя"></p>
+        <p>Отчество: <input class="form-input" type="text" id="middleNameInput" placeholder="Отчество"></p>
+        <p>Дата рождения: <input class="form-input" type="date" id="dateOfBirthInput"></p>
+        <p>Номер телефона: <input class="form-input" type="text" id="phoneNumberInput" placeholder="Номер телефона"></p>
+        <p>Email: <input class="form-input" type="email" id="emailInput" placeholder="Email"></p>
+        <div class="button-container">
+            <button class="update-button" onclick="saveUserData()">Сохранить</button>
+        </div>
     </div>
 </div>
 
 <div id="bankAccountModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeBankAccountModal()">&times;</span>
-        <h2>Обновить данные банковского счета</h2>
-        <p>Номер карты: <input type="text" id="cardNumberInput" placeholder="Номер карты"></p>
-        <p>Имя владельца: <input type="text" id="cardholderNameInput" placeholder="Имя владельца"></p>
-        <p>Срок действия: <input type="text" id="expirationDateInput" placeholder="Срок действия (MM/YY)"></p>
-        <p>Cvv: <input type="text" id="cvvInput" placeholder="***"></p>
-        <button onclick="saveBankAccountData()">Сохранить</button>
+        <h2>Редактирование данных банковского счета</h2>
+        <p>Номер карты: <input class="form-input" type="text" id="cardNumberInput" placeholder="Номер карты"></p>
+        <p>Имя владельца: <input class="form-input" type="text" id="cardholderNameInput" placeholder="Имя владельца"></p>
+        <p>Срок действия: <input class="form-input" type="text" id="expirationDateInput" placeholder="Срок действия (MM/YY)"></p>
+        <p>Cvv: <input class="form-input" type="text" id="cvvInput" placeholder="***"></p>
+        <div class="button-container">
+            <button class="update-button" onclick="saveBankAccountData()">Сохранить</button>
+        </div>
     </div>
 </div>
+
+<div class="footer">
+    <p>© 2024 Crypto coins platform. Все права защищены.</p>
+</div>
+
 </body>
 </html>

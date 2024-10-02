@@ -1,9 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:sec="http://www.springframework.org/security/tags" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Мои активы</title>
     <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgba(248, 249, 250, 0.8);
+            border-bottom: 1px solid #dee2e6;
+            color: #0056b3;
+        }
         .navigate-button {
             margin: 20px;
             padding: 10px 15px;
@@ -26,7 +35,9 @@
         .coin {
             display: flex;
             justify-content: space-between;
+            align-items: center; /* Центрируем элементы по вертикали */
             margin-bottom: 10px;
+            font-size: 18px; /* Увеличиваем размер текста внутри отображаемых данных */
         }
         .delete-button {
             margin-left: 10px;
@@ -35,15 +46,33 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            padding: 10px 15px; /* Сделаем кнопки одинакового размера */
+            font-size: 16px; /* Одинаковый размер текста */
         }
         .delete-button:hover {
             background-color: #c82333;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: rgba(248, 249, 250, 0.8);
+            border-top: 1px solid #dee2e6;
+            width: 100%;
+            position: fixed; /* Устанавливаем фиксированное позиционирование */
+            left: 0;
+            bottom: 0;
+            z-index: 1000; /* На случай, если другие элементы могут перекрыть футер */
         }
     </style>
 </head>
 <body>
 
-<button class="navigate-button" onclick="window.location.href='/usersPage'">Назад</button>
+<div class="header">
+    <h2>Crypto coins</h2>
+    <sec:authorize access="isAuthenticated()">
+        <button class="navigate-button" onclick="window.location.href='/usersPage'">Рынок криптовалюты</button>
+    </sec:authorize>
+</div>
 
 <div id="coinWalletContainer"></div>
 
@@ -64,16 +93,16 @@
                     }
 
                     container.append(`
-                    <div class="coin-wallet">
-                        <div class="coin">
-                            <span>Монета: ${wallet.coin}</span>
-                            <span>Количество: ${wallet.count}</span>
-                            <span>Стоимость за монету: ${wallet.costPerOneCoin} $</span>
-                            <span>Общая стоимость: ${wallet.totalCost} $</span>
-                            <button class="delete-button" data-id="${wallet.id}">Продать</button>
+                        <div class="coin-wallet">
+                            <div class="coin">
+                                <span>Монета: ${wallet.coin}</span>
+                                <span>Количество: ${wallet.count}</span>
+                                <span>Стоимость за монету: ${wallet.costPerOneCoin} $</span>
+                                <span>Общая стоимость: ${wallet.totalCost} $</span>
+                                <button class="delete-button" data-id="${wallet.id}">Продать</button>
+                            </div>
                         </div>
-                    </div>
-                `);
+                    `);
                 });
 
                 $('.delete-button').off('click').on('click', function() {
@@ -112,5 +141,10 @@
         loadCoinWallet();
     });
 </script>
+
+<div class="footer">
+    <p>© 2024 Crypto coins platform. Все права защищены.</p>
+</div>
+
 </body>
 </html>
