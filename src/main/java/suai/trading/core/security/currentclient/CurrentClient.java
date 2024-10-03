@@ -5,6 +5,4 @@ import java.util.UUID;
 public interface CurrentClient {
 
     UUID getId();
-    String getClientRoleName();
-    boolean isPresent();
 }

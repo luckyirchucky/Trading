@@ -23,18 +23,6 @@ public class CurrentClientImpl implements CurrentClient {
                 .orElseThrow(() -> new UnauthorizedException("Требуется аутентификация"));
     }
 
-    @Override
-    public String getClientRoleName() {
-        return getCurrentClient()
-                .map(client -> client.getRole().getName())
-                .orElseThrow(() -> new UnauthorizedException("Требуется аутентификация"));
-    }
-
-    @Override
-    public boolean isPresent() {
-        return getCurrentClient().isPresent();
-    }
-
     private Optional<Client> getCurrentClient() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
