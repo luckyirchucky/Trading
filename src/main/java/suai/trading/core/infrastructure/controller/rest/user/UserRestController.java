@@ -12,6 +12,7 @@ import suai.trading.core.service.client.ClientView;
 import suai.trading.core.service.client.query.ClientQueryService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -48,7 +49,7 @@ public class UserRestController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getUsers() {
+    public ResponseEntity<List<ClientView>> getUsers() {
         var users = clientQueryService.getAllClients();
         return ResponseEntity.ok(users);
     }

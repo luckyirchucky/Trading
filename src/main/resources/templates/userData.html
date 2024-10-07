@@ -20,6 +20,7 @@
         }
 
         function displayUserData(user) {
+            $('#updateUserId').val(user.id);
             $('#lastName').text(user.lastName);
             $('#firstName').text(user.firstName);
             $('#middleName').text(user.middleName);
@@ -69,10 +70,13 @@
                     closeUserModal();
                 },
                 error: function(xhr) {
+                    console.error("Error details:", xhr.responseText);
                     if (xhr.status === 400) {
                         alert("Ошибка при вводе данных.");
                     } else if (xhr.status === 404) {
                         alert("Пользователь не найден.");
+                    } else if (xhr.status === 405) {
+                        alert("Метод не разрешен. Проверьте настройки сервера.");
                     } else {
                         alert("Произошла ошибка. Пожалуйста, попробуйте позже.");
                     }
@@ -262,7 +266,6 @@
     <div class="box">
         <h2>Мои данные</h2>
         <div>
-            <input type="hidden" id="updateUserId">
             <div class="data-item"><b>Фамилия: </b><span id="lastName"> </span></div>
             <div class="data-item"><b>Имя: </b><span id="firstName"> </span></div>
             <div class="data-item"><b>Отчество: </b><span id="middleName"> </span></div>
@@ -289,6 +292,7 @@
     <div class="modal-content">
         <span class="close" onclick="closeUserModal()">&times;</span>
         <h2>Редактирование персональных данных</h2>
+        <input type="hidden" id="updateUserId">
         <p>Фамилия: <input class="form-input" type="text" id="lastNameInput" placeholder="Фамилия"></p>
         <p>Имя: <input class="form-input" type="text" id="firstNameInput" placeholder="Имя"></p>
         <p>Отчество: <input class="form-input" type="text" id="middleNameInput" placeholder="Отчество"></p>
